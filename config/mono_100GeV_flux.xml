@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flxtables>
+
+  <!-- 100 GeV ν_e, arbitrary normalisation -->
+  <fluxtable flav="nue">
+    <nu E="1.0e2" dNdE="1.0"/>  <!-- any non-zero value is fine -->
+  </fluxtable>
+
+  <!-- Uncomment if you also want anti-ν_e -->
+  <!--
+  <fluxtable flav="nuebar">
+    <nu E="1.0e2" dNdE="1.0"/>
+  </fluxtable>
+  -->
+
+</flxtables>
+

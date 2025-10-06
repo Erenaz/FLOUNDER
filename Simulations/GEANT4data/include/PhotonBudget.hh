@@ -2,6 +2,7 @@
 #include "G4UserEventAction.hh"
 #include "G4UserSteppingAction.hh"
 #include "G4ThreeVector.hh"
+#include "Digitizer.hh"
 
 #include <string>
 #include <vector>     // NEW: we keep PMT candidates for digitizer
@@ -9,7 +10,6 @@
 
 // forward decls to avoid heavy includes in the header
 class IORunAction;    // owner of ROOT file + Digitizer (set once from ActionInitialization)
-struct HitCandidate;  // simple {pmt_id, t_ns, lambda_nm} from Digitizer.hh
 
 struct PrimaryInfo {
   static void Set(const G4ThreeVector& x0, double t0_ns);

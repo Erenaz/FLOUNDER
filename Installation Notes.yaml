@@ -1,0 +1,25 @@
+# --- FLOUNDER Prompt Header ---
+goal: <one clear sentence of the outcome you want>
+context:
+  project_stage: <e.g., gSeaGen→GEANT4 hand-off / optics tables / reconstruction>
+  current_state: <what’s done; what’s not; blockers>
+  assets_provided: <files+paths list below>
+inputs:
+  geometry: <GDML/ROOT path + coordinate/frame units>
+  generator: <gSeaGen CLI or .cfg, TUNE, XSEC splines used>
+  dataset: <runs, NEVT, flavors, forced/non-forced, weights>
+  environment: <HPC3 modules, container/SIF, ROOT/Geant4 versions>
+constraints:
+  time_budget: <e.g., 45 min>
+  caps: <token/file limits if any>
+  must_not_change: <e.g., PMT layout fixed>
+acceptance_criteria:
+  - <quantitative DoD #1>
+  - <quantitative DoD #2>
+deliverables:
+  - <code/notebook/script>
+  - <figures/table names>
+  - <text: methods paragraph / checklist / README>
+open_questions:
+  - <your key uncertainties>
+# --- /Header ---

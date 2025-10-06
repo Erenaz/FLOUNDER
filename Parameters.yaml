@@ -1,0 +1,73 @@
+#Angular and Directional Cuts:
+#Sets the allowed range of the cosine of the neutrino zenith angle. For example, -t 0,1 means only up-going neutrinos (cosθ from 0 to 1).
+-t min_costheta,max_costheta
+
+#Energy Binning:
+#Specifies how many energy bins to use when generating the neutrino energy distribution. This can affect the resolution of your energy sampling.
+-b n_of_bins
+
+#Detector Depth:
+#Sets the site depth (in meters). This is important because it influences the definition of the interaction volume, especially for down-going neutrinos.
+-d depth
+
+#Site Coordinates:
+#Allows you to specify the geographic coordinates of your detector. You can provide the coordinates either as a numeric pair (or triple if including declination) or by specifying a predefined site name (e.g., ARCA, ORCA, IceCube).
+--coord
+
+#Flux Model and Cross Sections:
+#Lets you specify the XML file that contains pre-computed cross-section splines. If not provided, it will default to a file like gxspl-FNALsmall.xml or one that matches the chosen generator tune.
+--cross-sections XSecName
+#Specifies the GENIE generator tune (for example, G18_02a_00_000) which affects the cross-section values and overall physics settings.
+--tune generator_tune
+
+#Neutrino Propagation:
+#Activates the propagation of neutrinos through the Earth.
+-p
+#Sets the muon propagation code. Common choices are PROPOSAL (the default) or an internal muon propagation module.
+-prop
+
+#Source and Time Settings:
+#Activates the generation of neutrinos from a point-like (or extended) source. You can specify source coordinates or provide an XML file with source information.
+-point
+#Specifies the time interval for generation. You can choose among various time formats (Unix timestamp, Modified Julian Date, or a formatted date).
+-time time_format:StartTime,StopTime
+
+#Run Number and Seeds:
+#Allows you to set a specific Monte Carlo run number.
+-r run_number
+#Sets the random number seed, which is useful for reproducibility.
+--seed random_number_seed
+
+#Generation Surface and Volume Options:
+#Defines the radius of the generation surface. Options like can, vol, or a numeric value specify whether the generation surface should cover the detector can or the interaction volume, or be set to a custom radius.
+-rt option
+#Specifies an offset distance from the detector can for the generation surface, which can be useful for exploring boundary effects.
+--approach-dist dist_from_can
+
+#Output Format:
+#Chooses the output file format. Options include et (native gSeaGen ROOT format) or gen (native GENIE ROOT format). You can also specify multiple formats separated by commas.
+-format output_format
+
+#Saving and Propagation Options:
+#Selects which particles to save for propagation. Options include saving only muons, only neutrinos, both, or all particles.
+-save saved_particles
+#Sets the number of extra chances each CORSIKA shower gets to hit the detector can.
+-chances chances_per_shower
+#Specifies a custom rotation (yaw, pitch, roll) for the directional cosines of CORSIKA showers, which might be needed if you want to simulate a rotated detector configuration.
+--rot-showers
+#Controls how events are weighted. For instance, a value of 0 disables event weighting, while 1 or 2 applies different weighting schemes based on interaction probabilities.
+-wgt weighting_scheme
+
+#Additional Options for CORSIKA Data Handling:
+#Allows you to specify the cosmic ray flux model.
+--cr-flux CR_flux_model_name
+#Sets a maximum limit on the number of records read from CORSIKA output files.
+--corsika-max-nrecords nrec_limit
+#These options reduce verbosity or limit processing to conversion only when handling CORSIKA data.
+--corsika-less-verbose and --corsika-only-convert
+
+#Propagation Parameters:
+#Sets a tolerance for the muon range calculation.
+--muon-range-tolerance tolerance_value
+#Specifies the step length used in muon propagation calculations.
+--propagation-step step_length

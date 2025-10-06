@@ -31,6 +31,8 @@ set(FLNDR_COMMON_SRCS
   src/OpticalPropertiesLoader.cc
   src/OpticalInit.cc
   src/PhotonBudget.cc
+  src/Digitizer.cc
+  src/IO.cc
 )
 
 # --- Common include path (headers live in project/include)

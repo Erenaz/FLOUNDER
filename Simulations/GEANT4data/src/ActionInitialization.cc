@@ -5,18 +5,29 @@
 #include "PhotonBudget.hh"
 #include "IO.hh"
 #include "Digitizer.hh"
-
+#include "G4OpticalParameters.hh"   // for FAST_MODE toggle (optional)
 
 ActionInitialization::ActionInitialization(const G4String& rfile, double zshift)
 : fRootFile(rfile), fZshift(zshift) {}
 
-void ActionInitialization::Build() const {
+ void ActionInitialization::Build() const {
+  // Primary generator
   auto* gen = new RootrackerPrimaryGenerator(fRootFile, fZshift);
   SetUserAction(gen);
 
-  auto* evt = new PhotonCountEventAction();
-  SetUserAction(evt);
-  SetUserAction(new PhotonCountStackingAction(evt));
+  // --- Day-2: photon counting baseline
+  auto* pcEvt = new PhotonCountEventAction();
+  SetUserAction(pcEvt);
+  SetUserAction(new PhotonCountStackingAction(pcEvt));
+
+  if (std::getenv("FAST_MODE")) {
+  auto* op = G4OpticalParameters::Instance();
+  op->SetProcessActivation("OpRayleigh", false); // disable scattering
+  op->SetCerenkovMaxPhotonsPerStep(50);        // fewer photons per step
+  op->SetCerenkovTrackSecondariesFirst(false); // don’t stall primaries
+  // Add: op->SetBoundaryInvokeSD(true) as needed
+  G4cout << "[FAST_MODE] Rayleigh OFF, CerenkovMaxPhotonsPerStep=50\n";
+  }
 
   // Day-3 budget counters + CSV
   auto* budgetEvt = new PhotonBudgetEventAction();
@@ -24,21 +35,12 @@ void ActionInitialization::Build() const {
   SetUserAction(budgetEvt);
   SetUserAction(new PhotonBudgetSteppingAction(budgetEvt, "PMT"));
 
-  // ---- Day-4 IO + Digitizer -----------------------------------------
-  DigitizerParams P;
-  // knobs via env; sensible defaults
-  if (const char* s=getenv("DIGI_QE")) P.qe_flat = atof(s);
-  if (const char* s=getenv("DIGI_TTS_NS")) P.tts_sigma_ns = atof(s);
-  if (const char* s=getenv("DIGI_JIT_NS")) P.elec_jitter_ns = atof(s);
-  if (const char* s=getenv("DIGI_DARK_HZ")) P.dark_rate_hz = atof(s);
-  if (const char* s=getenv("DIGI_WIN_NS")) P.window_ns = atof(s);
-  if (const char* s=getenv("DIGI_THR_PE")) P.thr_pe = atof(s);
-  if (const char* s=getenv("DIGI_NCH")) P.n_pmt = std::max(1, atoi(s));
-
-  auto* io = new IORunAction("docs/day4/hits.root", P);
-  SetUserAction(io);
-
-  // stash a pointer somewhere accessible to EventAction (see below)
-  PhotonBudgetEventAction::SetIORun(io); // add a static setter on your event action
+  // --- Day-4: digitizer (QE thinning → PEs; TTS + jitter; dark; threshold)
+  auto* digiEvt = new DigitizerEventAction();
+  digiEvt->ConfigureFromEnv();               // reads DIGI_* env vars if set
+  digiEvt->SetOutPath("docs/day4/hits.root");
+  digiEvt->SetPMTMatch("PMT");               // adjust if GDML uses a different substring
+  SetUserAction(digiEvt);
+  SetUserAction(new DigitizerSteppingAction(digiEvt, "PMT"));
 }
 

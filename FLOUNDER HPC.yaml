@@ -1,0 +1,87 @@
+#HPC 
+nano ~/.bashrc
+source ~/.bashrc
+#Mac
+nano ~/.zshrc
+source ~/.zshrc
+
+#HPC Login
+ssh jingyz34@hpc3.rcic.uci.edu
+
+# Update from Mac → GitHub → HPC3
+## see what changed
+git status
+
+## stage and commit
+git add <files>                 # or: git add -A
+git commit -m "msg: concise but specific"
+
+## push (main), or push a feature branch if you prefer PRs
+git push origin main
+# (or) git checkout -b feat/digitizer; git push -u origin feat/digitizer
+
+## On HPC3:cd /pub/jingyz34/FLOUNDER
+## make sure you’re on the branch you want to update (e.g., main)
+git checkout main
+
+## pull cleanly (rebase keeps history linear)
+git pull --rebase
+
+## rebuild & run inside the image
+IMG=/pub/jingyz34/FLOUNDER/containers/geant4-root-11.3.sif
+W=/w
+module load singularity
+singularity exec -B /pub/jingyz34/FLOUNDER:$W "$IMG" bash -lc '
+  set -e
+  cd /w
+  cmake -S /w/geant4 -B /w/build -DCMAKE_BUILD_TYPE=Release
+  cmake --build /w/build -j ${SLURM_CPUS_PER_TASK:-4}
+  /w/build/flounder /w/geant4/macros/run.mac
+'
+
+# Update from HPC3 → GitHub → your Mac
+## On HPC3
+git status
+git add -A
+git commit -m "msg: what/why"
+git push origin main
+## On  Mac
+cd /path/to/FLOUNDER
+git checkout main
+git pull --rebase
+
+
+
+#Load singularity
+module load singularity/3.11.3
+#Get into the image
+singularity shell gseagen_open_v7.5.1.sif
+#Execute the program with some parameters
+singularity exec gseagen_open_v7.5.1.sif gSeaNuEvGen
+# set up the environment
+export GSEAGEN=/builds/opensource/gseagen
+export PATH=$GSEAGEN/bin:$PATH
+export LD_LIBRARY_PATH=$GSEAGEN/lib:$LD_LIBRARY_PATH
+
+# Cross section spline file:
+/pub/jingyz34/FLOUNDER/config/genie_xsec/v3_04_00/NULL/G1802a00000-k250-e1000/data/gxspl-NUsmall.xml
+
+#Download files from HPC3 to local
+scp -r "jingyz34@hpc3.rcic.uci.edu:/pub/jingyz34/FLOUNDER/Jobs/logs/FLOUNDER_image.err" .
+#Upload file to HPC3
+scp -r "jingyz34@hpc3.rcic.uci.edu:/pub/jingyz34/FLOUNDER/datasets/" .
+
+gSeaNuEvGen -n 1 -f [12] -e 99,100 -c 'CAN:0,40,1.5' -C -wgt 2 -o OneEvent --tune G18_02a_00_000
+
+gSeaNuEvGen -n 1 -r 1001 -p 12 -e 99.0,100 -t 1000080160[0.8879],1000010010[0.1121] --event-generator-list CC -c "CAN:0.0,40.0,1.5" --seed 12345 -o OneEvent0618
+
+singularity exec --cleanenv \
+  -B /pub/jingyz34/FLOUNDER/config:/mnt/config \
+  /pub/jingyz34/FLOUNDER/gseagen_open_v7.5.1.sif \
+  gSeaNuEvGen -n 1000 -e 1,10 -f [14] -o Gun_evt_test -w --message-thresholds Messenger_laconic.xml
+
+# Run from your gSeaGen build/run env
+gSeaNuEvGen  -c CAN:0,40,1.50  -C   -e 10,1000  -f [14,-14,12,-12,16,-16] -n 10000 -wgt 2 -format gen --tune G18_02a_00_000 --seed 20250811 -o flndr_day1_vtx
+                                                                            
+scp /path/to/gxspl-NUsmall.xml.gz  jingyz34@login.hpc3.uci.edu:/pub/jingyz34/FLOUNDER/config/
+

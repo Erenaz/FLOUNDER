@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<geometry>
+  <volumelist>
+    <!-- id="1" is the active water volume -->
+    <volume id="1" material="Water" density="1.0">
+      <shape type="cylinder" r="1.5"  z="40.0" />
+    </volume>
+  </volumelist>
+
+  <topvol>1</topvol>           <!-- the world volume -->
+  <units length="m" density="g/cm3"/>
+</geometry>
+

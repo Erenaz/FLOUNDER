@@ -1,0 +1,67 @@
+# -------------- Home‑brew --------------
+eval "$(/usr/local/bin/brew shellenv)"
+
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
+
+# --- personal wrappers first (root‑config filter lives here) ---
+export PATH="$HOME/bin:$PATH"
+
+# --- compilers --------------------------------------------------
+#   • Clang/clang++  : C & C++ (keeps ABI = libc++)
+#   • gfortran‑14    : Fortran (needed by Pythia 6 wrapper)
+export CC=clang
+export CXX=clang++
+export FC=gfortran-14
+export F77=gfortran-14
+
+# put GNU gfortran directory on the runtime search path
+export GFORTRAN_DIR="$(dirname "$(gfortran-14 -print-file-name=libgfortran.dylib)")"
+export DYLD_LIBRARY_PATH="$GFORTRAN_DIR:$DYLD_LIBRARY_PATH"
+
+# -------------- ROOT 6.34.08 with Pythia 6 & 8 --------------
+export ROOTSYS=$HOME/Desktop/CodeRepository/root_install
+export PATH="$ROOTSYS/bin:$PATH"
+export DYLD_LIBRARY_PATH="$ROOTSYS/lib/root:$DYLD_LIBRARY_PATH"
+
+# root‑config wrapper (strips -stdlib=libc++)
+cat > "$HOME/bin/root-config" <<'EOF'
+#!/usr/bin/env bash
+real=$(command -v -p root-config | tail -n1)
+"$real" "$@" | sed 's/-stdlib=libc++//g'
+EOF
+chmod +x "$HOME/bin/root-config"
+
+# -------------- PYTHIA builds (headers + libs for ROOT) -------
+export PYTHIA6_DIR=$HOME/Desktop/CodeRepository/pythia6/v6_428
+export PYTHIA8_DIR=$HOME/Desktop/CodeRepository/pythia8313
+export DYLD_LIBRARY_PATH="$PYTHIA6_DIR/lib:$PYTHIA8_DIR/lib:$DYLD_LIBRARY_PATH"
+
+# -------------- GENIE 3.02 install ----------------------------
+export GENIE_HOME=$HOME/CodeRepository/GENIE-install
+export PATH="$GENIE_HOME/bin:$PATH"
+export DYLD_LIBRARY_PATH="$GENIE_HOME/lib:$DYLD_LIBRARY_PATH"
+
+# -------------- gSeaGen install -------------------------------
+export GSEAGEN_HOME=$HOME/Desktop/CodeRepository/gSeaGen-install
+export PATH="$GSEAGEN_HOME/bin:$PATH"
+export DYLD_LIBRARY_PATH="$GSEAGEN_HOME/lib:$DYLD_LIBRARY_PATH"
+
+# -------------- External libs from Home‑brew ------------------
+export LHAPDF_DIR="$(brew --prefix lhapdf)"
+export LOG4CPP_DIR="$(brew --prefix log4cpp)"
+export GSL_DIR="$(brew --prefix gsl)"
+export LIBXML2_DIR="$(brew --prefix libxml2)"
+export DYLD_LIBRARY_PATH="$LHAPDF_DIR/lib:$LOG4CPP_DIR/lib:$GSL_DIR/lib:$LIBXML2_DIR/lib:$DYLD_LIBRARY_PATH"
+export LHAPDF_DATA_PATH="$LHAPDF_DIR/share/LHAPDF"
+
+# keep C++ / linker flags available for ad‑hoc builds
+export CXXFLAGS="-I$ROOTSYS/include"
+export LDFLAGS="-L$DYLD_LIBRARY_PATH"
+
+export G4INSTALL="$HOME/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install"
+source "$G4INSTALL/bin/geant4.sh"
+export PATH="$G4INSTALL/bin:$PATH"
+export CMAKE_PREFIX_PATH="$G4INSTALL:$(brew --prefix qt@5):${CMAKE_PREFIX_PATH:-}"

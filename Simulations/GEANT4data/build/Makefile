@@ -215,6 +215,66 @@ src/DetectorConstruction.cc.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/flndr_day3.dir/build.make CMakeFiles/flndr_day3.dir/src/DetectorConstruction.cc.s
 .PHONY : src/DetectorConstruction.cc.s
 
+src/Digitizer.o: src/Digitizer.cc.o
+.PHONY : src/Digitizer.o
+
+# target to build an object file
+src/Digitizer.cc.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/flndr_day1.dir/build.make CMakeFiles/flndr_day1.dir/src/Digitizer.cc.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/flndr_day2.dir/build.make CMakeFiles/flndr_day2.dir/src/Digitizer.cc.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/flndr_day3.dir/build.make CMakeFiles/flndr_day3.dir/src/Digitizer.cc.o
+.PHONY : src/Digitizer.cc.o
+
+src/Digitizer.i: src/Digitizer.cc.i
+.PHONY : src/Digitizer.i
+
+# target to preprocess a source file
+src/Digitizer.cc.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/flndr_day1.dir/build.make CMakeFiles/flndr_day1.dir/src/Digitizer.cc.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/flndr_day2.dir/build.make CMakeFiles/flndr_day2.dir/src/Digitizer.cc.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/flndr_day3.dir/build.make CMakeFiles/flndr_day3.dir/src/Digitizer.cc.i
+.PHONY : src/Digitizer.cc.i
+
+src/Digitizer.s: src/Digitizer.cc.s
+.PHONY : src/Digitizer.s
+
+# target to generate assembly for a file
+src/Digitizer.cc.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/flndr_day1.dir/build.make CMakeFiles/flndr_day1.dir/src/Digitizer.cc.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/flndr_day2.dir/build.make CMakeFiles/flndr_day2.dir/src/Digitizer.cc.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/flndr_day3.dir/build.make CMakeFiles/flndr_day3.dir/src/Digitizer.cc.s
+.PHONY : src/Digitizer.cc.s
+
+src/IO.o: src/IO.cc.o
+.PHONY : src/IO.o
+
+# target to build an object file
+src/IO.cc.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/flndr_day1.dir/build.make CMakeFiles/flndr_day1.dir/src/IO.cc.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/flndr_day2.dir/build.make CMakeFiles/flndr_day2.dir/src/IO.cc.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/flndr_day3.dir/build.make CMakeFiles/flndr_day3.dir/src/IO.cc.o
+.PHONY : src/IO.cc.o
+
+src/IO.i: src/IO.cc.i
+.PHONY : src/IO.i
+
+# target to preprocess a source file
+src/IO.cc.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/flndr_day1.dir/build.make CMakeFiles/flndr_day1.dir/src/IO.cc.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/flndr_day2.dir/build.make CMakeFiles/flndr_day2.dir/src/IO.cc.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/flndr_day3.dir/build.make CMakeFiles/flndr_day3.dir/src/IO.cc.i
+.PHONY : src/IO.cc.i
+
+src/IO.s: src/IO.cc.s
+.PHONY : src/IO.s
+
+# target to generate assembly for a file
+src/IO.cc.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/flndr_day1.dir/build.make CMakeFiles/flndr_day1.dir/src/IO.cc.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/flndr_day2.dir/build.make CMakeFiles/flndr_day2.dir/src/IO.cc.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/flndr_day3.dir/build.make CMakeFiles/flndr_day3.dir/src/IO.cc.s
+.PHONY : src/IO.cc.s
+
 src/OpticalInit.o: src/OpticalInit.cc.o
 .PHONY : src/OpticalInit.o
 
@@ -433,6 +493,12 @@ help:
 	@echo "... src/DetectorConstruction.o"
 	@echo "... src/DetectorConstruction.i"
 	@echo "... src/DetectorConstruction.s"
+	@echo "... src/Digitizer.o"
+	@echo "... src/Digitizer.i"
+	@echo "... src/Digitizer.s"
+	@echo "... src/IO.o"
+	@echo "... src/IO.i"
+	@echo "... src/IO.s"
 	@echo "... src/OpticalInit.o"
 	@echo "... src/OpticalInit.i"
 	@echo "... src/OpticalInit.s"

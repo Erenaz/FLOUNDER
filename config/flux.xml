@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flxtables>
+
+  <!-- ν_mu flux (example: power-law E^-2.3 from 10 GeV to 3 TeV) -->
+  <fluxtable flav="numu">
+    <nu E="1.0e1"  dNdE="3.98e-5"/>
+    <nu E="3.0e1"  dNdE="5.1e-6"/>
+    <nu E="1.0e2"  dNdE="7.5e-7"/>
+    <nu E="3.0e2"  dNdE="1.0e-7"/>
+    <nu E="1.0e3"  dNdE="1.4e-8"/>
+    <nu E="3.0e3"  dNdE="1.8e-9"/>
+  </fluxtable>
+
+  <!-- anti-ν_mu (assume 40 % of ν_mu normalisation, same slope) -->
+  <fluxtable flav="numubar">
+    <nu E="1.0e1"  dNdE="1.59e-5"/>
+    … etc …
+  </fluxtable>
+
+  <!-- Add ν_e / anti-ν_e or ν_tau as needed -->
+  <!-- <fluxtable flav="nue"> … </fluxtable> -->
+
+</flxtables>
+

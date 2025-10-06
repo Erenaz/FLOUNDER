@@ -184,6 +184,34 @@ CMakeFiles/flndr_day3.dir/src/PhotonBudget.cc.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/flndr_day3.dir/src/PhotonBudget.cc.s"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data/src/PhotonBudget.cc -o CMakeFiles/flndr_day3.dir/src/PhotonBudget.cc.s
 
+CMakeFiles/flndr_day3.dir/src/Digitizer.cc.o: CMakeFiles/flndr_day3.dir/flags.make
+CMakeFiles/flndr_day3.dir/src/Digitizer.cc.o: /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data/src/Digitizer.cc
+CMakeFiles/flndr_day3.dir/src/Digitizer.cc.o: CMakeFiles/flndr_day3.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/flndr_day3.dir/src/Digitizer.cc.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/flndr_day3.dir/src/Digitizer.cc.o -MF CMakeFiles/flndr_day3.dir/src/Digitizer.cc.o.d -o CMakeFiles/flndr_day3.dir/src/Digitizer.cc.o -c /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data/src/Digitizer.cc
+
+CMakeFiles/flndr_day3.dir/src/Digitizer.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/flndr_day3.dir/src/Digitizer.cc.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data/src/Digitizer.cc > CMakeFiles/flndr_day3.dir/src/Digitizer.cc.i
+
+CMakeFiles/flndr_day3.dir/src/Digitizer.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/flndr_day3.dir/src/Digitizer.cc.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data/src/Digitizer.cc -o CMakeFiles/flndr_day3.dir/src/Digitizer.cc.s
+
+CMakeFiles/flndr_day3.dir/src/IO.cc.o: CMakeFiles/flndr_day3.dir/flags.make
+CMakeFiles/flndr_day3.dir/src/IO.cc.o: /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data/src/IO.cc
+CMakeFiles/flndr_day3.dir/src/IO.cc.o: CMakeFiles/flndr_day3.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/flndr_day3.dir/src/IO.cc.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/flndr_day3.dir/src/IO.cc.o -MF CMakeFiles/flndr_day3.dir/src/IO.cc.o.d -o CMakeFiles/flndr_day3.dir/src/IO.cc.o -c /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data/src/IO.cc
+
+CMakeFiles/flndr_day3.dir/src/IO.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/flndr_day3.dir/src/IO.cc.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data/src/IO.cc > CMakeFiles/flndr_day3.dir/src/IO.cc.i
+
+CMakeFiles/flndr_day3.dir/src/IO.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/flndr_day3.dir/src/IO.cc.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data/src/IO.cc -o CMakeFiles/flndr_day3.dir/src/IO.cc.s
+
 # Object files for target flndr_day3
 flndr_day3_OBJECTS = \
 "CMakeFiles/flndr_day3.dir/src/main_day2.cc.o" \
@@ -193,7 +221,9 @@ flndr_day3_OBJECTS = \
 "CMakeFiles/flndr_day3.dir/src/PhotonCountActions.cc.o" \
 "CMakeFiles/flndr_day3.dir/src/OpticalPropertiesLoader.cc.o" \
 "CMakeFiles/flndr_day3.dir/src/OpticalInit.cc.o" \
-"CMakeFiles/flndr_day3.dir/src/PhotonBudget.cc.o"
+"CMakeFiles/flndr_day3.dir/src/PhotonBudget.cc.o" \
+"CMakeFiles/flndr_day3.dir/src/Digitizer.cc.o" \
+"CMakeFiles/flndr_day3.dir/src/IO.cc.o"
 
 # External object files for target flndr_day3
 flndr_day3_EXTERNAL_OBJECTS =
@@ -206,6 +236,8 @@ flndr_day3: CMakeFiles/flndr_day3.dir/src/PhotonCountActions.cc.o
 flndr_day3: CMakeFiles/flndr_day3.dir/src/OpticalPropertiesLoader.cc.o
 flndr_day3: CMakeFiles/flndr_day3.dir/src/OpticalInit.cc.o
 flndr_day3: CMakeFiles/flndr_day3.dir/src/PhotonBudget.cc.o
+flndr_day3: CMakeFiles/flndr_day3.dir/src/Digitizer.cc.o
+flndr_day3: CMakeFiles/flndr_day3.dir/src/IO.cc.o
 flndr_day3: CMakeFiles/flndr_day3.dir/build.make
 flndr_day3: /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/lib/libG4Tree.dylib
 flndr_day3: /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/lib/libG4FR.dylib
@@ -254,7 +286,7 @@ flndr_day3: /usr/local/Cellar/root/6.36.04/lib/root/libRIO.so
 flndr_day3: /usr/local/Cellar/root/6.36.04/lib/root/libThread.so
 flndr_day3: /usr/local/Cellar/root/6.36.04/lib/root/libCore.so
 flndr_day3: CMakeFiles/flndr_day3.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking CXX executable flndr_day3"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Linking CXX executable flndr_day3"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/flndr_day3.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

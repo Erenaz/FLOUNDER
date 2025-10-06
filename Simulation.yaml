@@ -1,0 +1,156 @@
+#!/bin/bash
+#SBATCH --job-name=gen_sample
+#SBATCH -A sbarwick_lab
+#SBATCH -p free
+#SBATCH --time=0-02:00:00
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=2
+#SBATCH --mem=6G
+#SBATCH --requeue
+#SBATCH --output=/pub/jingyz34/FLOUNDER/Jobs/logs/gen_%j.out
+#SBATCH --error=/pub/jingyz34/FLOUNDER/Jobs/logs/gen_%j.err
+#SBATCH --mail-type=fail,end
+#SBATCH --mail-user=jingyz34@uci.edu
+
+set -euo pipefail
+module load singularity
+
+# ---------------- USER KNOBS (edit per sample or override via sbatch --export=ALL,VAR=...) ----------------
+MODE="${MODE:-all}"                        # one of: all, cc_only, nc_only  (affects event list + default outdir + runlog mode)
+TAG="${TAG:-sample_0p1_999}"               # unique tag for filenames
+NEVT="${NEVT:-50000}"                      # number of neutrino throws
+SEED="${SEED:-123456}"                     # RNG seed
+CAN="${CAN:-CAN:0,40,1.50}"                # cylindrical CAN: zmin,zmax[m], R[m]
+ENERGY="${ENERGY:-0.1,999.9}"              # Emin,Emax [GeV]
+BINS="${BINS:-}"                           # empty = none; or e.g. 20 for -b 20 (log10(E) bins)
+WGT="${WGT:-2}"                            # 2 = forced-interaction weighting (recommended for vertex-rich samples)
+FLUX_SPEC="${FLUX_SPEC:-[12,-12,14,-14,16,-16]}"   # can be PDG list or explicit function, e.g. 'FUNC1:1.0[12,-12,...]'
+TUNE="${TUNE:-G18_02a_00_000}"             # GENIE tune
+BOOST_OPTS="${BOOST_OPTS:--t -1,1 -rt proj}"       # optional: uniformize vertex spray; set to "" to disable
+OUT_SUBDIR="${OUT_SUBDIR:-${MODE}}"        # subfolder under SimulationData/
+# ----------------------------------------------------------------------------------------------------------
+
+# Paths
+WORK=/pub/jingyz34/FLOUNDER
+IMG=$WORK/gseagen_open_v7.5.1.sif
+W=/w
+
+# Outputs
+HOST_OUTDIR=$WORK/SimulationData/${OUT_SUBDIR}
+HOST_RUNSDIR=$WORK/runs
+mkdir -p "$HOST_OUTDIR" "$WORK/Jobs/logs" "$HOST_RUNSDIR"
+
+W_OUTDIR=$W/SimulationData/${OUT_SUBDIR}
+XSEC_HOST=$WORK/config/genie_xsec/v3_04_00/NULL/G1802a00000-k250-e1000/data/gxspl-NUsmall.xml
+XSEC_W=${XSEC_W:-$W/config/genie_xsec/v3_04_00/NULL/G1802a00000-k250-e1000/data/gxspl-NUsmall.xml}
+
+# Event list from MODE
+case "$MODE" in
+  cc_only) GENLIST="CC" ;;
+  nc_only) GENLIST="NC" ;;
+  all|*)   GENLIST="Default" ;;
+esac
+[[ "$GENLIST" == "Default" ]] && GENLIST_OPT="" || GENLIST_OPT="--event-generator-list $GENLIST"
+
+# Filenames (host + container)
+BASE_H=$HOST_OUTDIR/${TAG}
+GHEP_H=${BASE_H}.100000000.ghep.root
+GTRAC_H=${BASE_H}.gtrac.root
+GST_H=${BASE_H}.gst.root
+OK_H=${BASE_H}.ok
+
+BASE_W=$W_OUTDIR/${TAG}
+GHEP_W=${BASE_W}.100000000.ghep.root
+GTRAC_W=${BASE_W}.gtrac.root
+GST_W=${BASE_W}.gst.root
+
+# ---------------- 1) Generate (idempotent; atomic publish without QC) ----------------
+if [[ -f "$OK_H" && -s "$GHEP_H" && -s "$GST_H" && -s "$GTRAC_H" ]]; then
+  echo "[SKIP] Already published: $TAG"
+else
+  # temp basename while generating
+  PART_W=${BASE_W}.part
+  rm -f "${PART_W}.100000000.ghep.root" "${PART_W}.gst.root" "${PART_W}.gtrac.root"
+
+  echo "[RUN] gSeaNuEvGen  TAG=$TAG  MODE=$MODE  NEVT=$NEVT  SEED=$SEED  ENERGY=$ENERGY  BINS=${BINS:-none}"
+  singularity exec --cleanenv -B "$WORK":$W "$IMG" \
+    gSeaNuEvGen \
+      -c "$CAN" -C ${BOOST_OPTS:+$BOOST_OPTS} \
+      -e $ENERGY ${BINS:+-b $BINS} \
+      -f "$FLUX_SPEC" \
+      -n $NEVT \
+      -wgt $WGT \
+      -format gen \
+      --tune "$TUNE" \
+      --cross-sections "$XSEC_W" \
+      $GENLIST_OPT \
+      --seed $SEED \
+      -o "$PART_W"
+
+  # Convert
+  singularity exec --cleanenv -B "$WORK":$W "$IMG" gntpc -i "${PART_W}.100000000.ghep.root" -f rootracker -o "${PART_W}.gtrac.root"
+  singularity exec --cleanenv -B "$WORK":$W "$IMG" gntpc -i "${PART_W}.100000000.ghep.root" -f gst        -o "${PART_W}.gst.root"
+
+  # Publish atomically
+  mv "${PART_W}.100000000.ghep.root" "$GHEP_H"
+  mv "${PART_W}.gtrac.root"          "$GTRAC_H"
+  mv "${PART_W}.gst.root"            "$GST_H"
+  touch "$OK_H"
+fi
+
+# ---------------- 2) Runlog (locked append) ----------------
+RUNLOG=$HOST_RUNSDIR/runlog.csv
+RUNLOCK=${RUNLOG}.lock
+STAMP=$(date -u +%Y%m%dT%H%M%SZ)
+B_GHEP=$(wc -c < "$GHEP_H" | tr -d '[:space:]'); B_GST=$(wc -c < "$GST_H" | tr -d '[:space:]')
+LINE="$STAMP,$SLURM_JOB_ID,$MODE,$TAG,$CAN,$ENERGY,${BINS:-},$NEVT,$SEED,$TUNE,$GENLIST,$XSEC_HOST,$GHEP_H,$GST_H,$B_GHEP,$B_GST,$IMG,$FLUX_SPEC,$WGT"
+
+if command -v flock >/dev/null 2>&1; then
+  exec 9>>"$RUNLOCK"
+  flock -x 9
+    [[ -s "$RUNLOG" ]] || echo "timestamp,job_id,mode,tag,can,energy,bins,nevents,seed,tune,genlist,spline,ghep,gst,bytes_ghep,bytes_gst,image,flux_spec,wgt" > "$RUNLOG"
+    printf '%s\n' "$LINE" >> "$RUNLOG"
+  flock -u 9
+  exec 9>&-
+else
+  printf '%s\n' "$LINE" >> "${RUNLOG%.csv}_${TAG}.csv"
+fi
+
+echo "[DONE] ${MODE} → $GHEP_H"
+
+
+// DetectorConstruction.cc (temporary, no GDML)
+#include <G4VUserDetectorConstruction.hh>
+#include <G4NistManager.hh>
+#include <G4Tubs.hh>
+#include <G4Box.hh>
+#include <G4LogicalVolume.hh>
+#include <G4PVPlacement.hh>
+#include <G4SystemOfUnits.hh>
+#include <G4VisAttributes.hh>
+#include <G4Colour.hh>
+
+class DetectorConstruction : public G4VUserDetectorConstruction {
+public:
+  G4VPhysicalVolume* Construct() override {
+    auto nist = G4NistManager::Instance();
+    auto water = nist->FindOrBuildMaterial("G4_WATER");   // temporary
+
+    // World
+    auto worldSolid = new G4Box("World", 30*m, 30*m, 30*m);
+    auto worldLV = new G4LogicalVolume(worldSolid, nist->FindOrBuildMaterial("G4_AIR"), "WorldLV");
+    auto worldPV = new G4PVPlacement(nullptr, {}, worldLV, "WorldPV", nullptr, false, 0, true);
+
+    // “Can” (radius 1.5 m, length 40 m total → 20 m half-length)
+    auto canSolid = new G4Tubs("Can", 0.*mm, 1500.*mm, 20000.*mm, 0., 360.*deg);
+    auto canLV = new G4LogicalVolume(canSolid, water, "CanLV");
+    new G4PVPlacement(nullptr, {}, canLV, "CanPV", worldLV, false, 0, true);
+
+    worldLV->SetVisAttributes(new G4VisAttributes(G4Colour(0.9,0.9,0.9,0.02)));
+    auto canVis = new G4VisAttributes(G4Colour(0.1,0.4,0.9,0.2));
+    canVis->SetForceSolid(false);
+    canLV->SetVisAttributes(canVis);
+
+    return worldPV;
+  }
+};

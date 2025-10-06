@@ -9,6 +9,7 @@
 Simulations/Data/
 Simulations/*.root
 Simulations/*.binstat
+Simulations/genie_xsec/
 
 # Notebook checkpoints
 **/.ipynb_checkpoints/

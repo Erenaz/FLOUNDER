@@ -1,0 +1,286 @@
+**Syntax**
+ gSeaNuEvGen 
+           [-a generation_spectral_index]
+           [-b n_of_bins]
+           [-bedrock bedrock_height]
+           [-c can_definition]
+           [-C]
+           [--coord site_coordinate_definition]
+           [--cross-sections XSecName]
+           [-d depth]
+           [-e min_energy,max_energy]
+           [--event-generator-list list_name]
+           [-f simulation:flux[neutrino_code],...]
+           [-format output_format]
+           [-n n_of_events]
+           [-o output_event_file_prefix]
+           [-origin X0,Y0,Z0]
+           [-p]
+           [-point source_info]
+           [-prop prop_code]
+           [-r run_number]
+           [-rt RT_option]
+           [--seed random_number_seed]
+           [-t min_costheta,max_costheta]
+           [-time time_format:StartTime,StopTime]
+           [--tune generator_tune]
+           [-utm]
+           [-save saved_particles]
+           [-chances chances_per_shower]
+           [--rot-showers UNIT:yaw,pitch,roll]
+           [-wgt weighting_scheme]
+           [--cr-flux CR_flux_model_name]
+           [--corsika-max-nrecords nrec_limit]
+           [--corsika-less-verbose verbosity_switch]
+           [--corsika-only-convert only_convert_flag]
+           [--muon-range-tolerance tolerance_value]
+           [--propagation-step step_lenght]
+           [--approach-dist dist_from_can]
+
+ **Code Options**
+
+ [] Denotes an optional argument.
+
+ -a        Specifies the generation spectral index [default: 1.4].
+
+ -b        Specifies the number of energy bins [default: 1]. 
+
+ -bedrock  Specifies the height of the bedrock just below the seabottom (in meters) [default: 0.]. 
+
+ -c        Specifies input for the detector can definition. 
+           Possible choices are: 
+             1)  '-c CAN:Zmin,Zmax,Rad' 
+               where Zmin (>=0) and Zmax (<=Depth) are bottom and top Z coordinates of the can in the code coordinate system
+               and Rad is its radius in meters. eg. 'CAN:0.000,659.862,309.450' [default].
+               The site depth will be set to the default value if not specified using -d option.
+               Take care that the depth site enters in the definition of the interaction volume for down-going neutrinos!
+               The detector coordinate sites are set to the default values if not specified using -coord option.
+
+ -C        Force the interaction volume to be the detector CAN. This option has  
+           an effect only in case of muon and tau CC interaction. In the other 
+           cases the interaction volume is already the CAN.
+
+ --coord   Specifies the detector site coordinates. 
+           Possible choices are: 
+             1)  --coord UNIT:latitude,longitude [,declination]  
+               where detector site latitude and longitude are in radians (UNIT=RAD) or in degrees (UNIT=DEG) [default RAD:0.74700,0.10763].
+               The longitude is positive eastwards from the meridian of Greenwich, and negative to the West.
+               Additionally, magnetic declination of the detector site may be specified in radians (UNIT=RAD) or in degrees (UNIT=DEG) [default RAD:2.28*cPi/180.]
+
+             2)  --coord SITE:site_name  
+               detector site coordinates and magnetic declination are set by site name. Currently the predefined sites are: ARCA, ORCA, IceCube, GVD.
+
+
+ --cross-sections XSecName 
+           Name of an XML file with pre-computed
+           cross-section values used for constructing splines [default: gxspl-FNALsmall.xml]
+
+           eg. '--cross-sections gxspl-FNALsmall.xml' 
+
+           If the option is not used and the gxspl-FNALsmall.xml file does not exist, 
+           the code checks for the existence of the <generator_tune>.xml file (see opt --tune) 
+
+ -d        Specifies the site depth in meters [default: 2475]. 
+           This option has an effect only if the detector can is defined by hand (see -c option).
+
+ -e        Specifies the neutrino energy in GeV [default: 1,1000]. 
+           Must be a comma-separated pair of numbers, eg. `-e 0.3,70' 
+
+ --event-generator-list list_name
+           List of event generators to load. Valid settings are the XML block names appearing in
+           config/EventGeneratorListAssembler.xml [default: 'Default'].
+
+           eg. '--event-generator-list  CC' 
+           eg. '--event-generator-list  NC' 
+
+ -f        Specifies the neutrino types to be generated and the neutrino flux models used to weight the events.
+           The general syntax is: `-f simulation:flux,...[neutrino_code],flux...[neutrino_code];simulation:...`
+           where the `simulation' string specifies the model, 'flux' is the neutrino flux or the file containing it
+           and the 'neutrino_code' is the neutrino type in the PDG code (12: nu_e, -12: anti_nu_e, 14: nu_mu,
+           -14: anti_nu_mu, 16: nu_tau, -16: anti_nu_tau).
+
+           Alternatively, if gSeaGen is not used to generate particles, but only propagate the ones generated
+           with an external code (CORSIKA), -f keyword may be used in 2 ways:
+           `-f EVT:corant_file.evt` for files preprocessed with corant (https://git.km3net.de/simulation/corant)
+           and
+           `-f BIN:corsika_binary_file` for binary CORSIKA output files
+
+           Notes: 
+            - Possible values for `simulation' are: FLUKA, BARTOL, HONDA or FUNCX (where X=1,2,3).
+              In case of FLUKA, BARTOL or HONDA, flux is the file name (incl. full path).
+              See:
+              Bartol fluxes: http://www-pnp.physics.ox.ac.uk/~barr/fluxfiles
+              Fluka fluxes:  http://pcbat1.mi.infn.it/~battist/neutrino.html
+              Honda fluxes:  http://www.icrr.u-tokyo.ac.jp/~mhonda/nflx2014/index.html
+
+              eg. '-f BARTOL:dat/f210_3_z.kam_num[14],dat/f210_3_z.kam_nbm[-14]' 
+
+            - More than one file can be defined for each neutrino code. 
+
+              eg. '-f BARTOL:dat/fmin10_0401z.kam_nue,dat/f210_3_z.kam_nue[12]' 
+
+              In case of `FUNC1', flux is a mathematical function (c++ syntax) depending on x, which represents 
+              the neutrino energy in units of GeV. The flux is in unit of 1/(GeV m2 s sr). 
+
+              eg. '-f FUNC1:1E-5*pow(x,-2)[14]' 
+
+              Two-dimensional  functions  depending  on  x  and  y  can  be  provided to define a dependence on the  
+              neutrino arrival direction.  In this case the tag simul has value FUNC2 and the variable y represents cos(theta).  
+              Similarly three-dimensional functions depending also on the variable z (representing the angle phi in radians)  
+              can be provided by setting the tag simul to FUNC3. 
+
+            - More than one 'simulation' input can be defined. 
+              Fluxes corresponding to the same neutrino code will added. 
+
+              eg. '-f BARTOL:dat/f210_3_z.kam_num[14];FUNC1:x[14]' 
+
+            - More than one -f option is allowed. 
+              Fluxes corresponding to the same neutrino code will added. 
+
+              eg. '-f BARTOL:dat/f210_3_z.kam_nue[12] -f BGLRS:dat/f210_3_z.kam_nbm[-12]' 
+
+            - Values for `simulation' and 'flux' are not mandatory. In this case the code will set by default: 
+              simulation= FUNC1 and flux= 1E-5*pow(x,-2) 
+
+              eg. '-f [14]' 
+              eg. '-f [12,14]' 
+              eg. '-f [16,-16]' 
+
+ -format output_format [default: et]
+           Specifies the output file format.
+           Possible choices are: 
+           - et     --> native gSeaGen ROOT output file
+           - gen    --> native GENIE ROOT output file
+
+           It is possible to write the output file in different formats among those available, e.g.
+           -format et,gen
+ 
+
+ -n        Specifies how many neutrinos to generate. 
+
+ -o        Sets the prefix of the output event file [default: gseagen]. 
+           The output filename is built as: 
+           [prefix].[run_number].evt 
+
+ -origin X0,Y0,Z0 
+           Sets the coordinates (in meters) of origin of the detector reference system in the code coordinate systems [default: 0.,0.,0.]. 
+
+ -p        Activates the neutrino propagation through the Earth [default: no propagation].
+
+ -prop     Set the muon propagation code.
+           Possible choices are: 
+             *  -prop PropaMuon [internal code]
+             *  -prop PROPOSAL  [default]
+
+ -point    Activates the generation from point-like (and extended) sources. 
+           Possible choices are: 
+             1)  -point 'DEC:src_decl'
+               where src_decl is the source declination in degrees. The source right ascension will be RA=0; 
+               the generated interval time will be TGen = 31556926 sec (1 yr as in the diffuse mode); 
+               the Local Sidereal Time will be generated between 0h and 24h.
+
+             2)  -point 'FILE:AstroSource.xml'
+                info about the source are read from file AstroSource.xml
+                The user has the possibility to set:
+                   - the source coordinates using equatorial or galactic coordinates;
+                   - the source angular radius (extended source)
+                See $GSEAGEN/dat/AstroSource.xml for an example.
+
+           If point/extended mode is activated, only tag FUNC for -f option is available.
+
+ -r        Specifies the MC run number [default: 100000000]. 
+
+ -rt       Set option to define the generation area radius RT
+           Possible choices are: 
+             1)  -rt 'can' 
+               the generation surface will be a circle covering the detector can projected onto a plane perpendicular to each neutrino direction.
+             2)  -rt 'vol' 
+               the generation surface will be a circle covering the interaction volume projected onto a plane perpendicular to each neutrino direction.
+             3)  -rt proj 
+               the generation surface will be the detector can projected onto a plane perpendicular to each neutrino direction.
+             4)  -rt value 
+               the generation surface radius will RT = value (in meters).
+
+ --seed random_number_seed [default: 12345]
+
+ -t        Specifies the neutrino angular range. [default: 0.,1.] (up-going neutrinos)
+           Must be a comma-separated pair of numbers, eg. `-t 0.,1.' 
+
+ -time     Specifies the generation time interval. 
+           The general syntax is: `-time time_format:StartTime,StopTime
+           where the time_format string specifies the format for StartTime and StopTime.
+
+           Notes: 
+            - Possible values for time_format are: 
+              TS: StartTime and StopTime are in Unix Time Stamp.
+              MJD: StartTime and StopTime are in Modified Julian Date.
+              DATE: StartTime and StopTime are in date in format (time in GMT) dd-mm-yyyy;hh:mm:ss
+
+            - Value for time_format is not mandatory. In this case the code will set by default:
+              time_format= TS 
+
+ --tune    Specifies the generator tune, required for GENIE version >=3.00.00 [default: G18_02a_00_000]
+           Example: 
+           --tune G18_02a_00_000 
+
+ -utm      Use UTM detector system  [default: false]
+
+
+ -save     Choose the particles produced in CORSIKA that are saved for propagation  [default: 'mu']
+           Must be used with -write 2 except for -save 'mu', which will work with any -write option
+           Possible choices are: 
+             1)  -save 'mu' 
+               only saves muons.
+             2)  -save 'nu' 
+               only saves neutrinos.
+             2)  -save 'lep' 
+               saves both muons and neutrinos.
+             3)  -save 'all' 
+               saves muons, neutrinos and all other particles that reached the sea level.
+
+ -chances  Number of extra chances each CORSIKA shower will get to hit the can [default: 0]
+
+ --rot-showers     Specifies the custom rotation of directional cosines for all the CORSIKA showers at the sea level
+                   in radians (UNIT=RAD) or in degrees (UNIT=DEG) [default: RAD:0.0,0.0,0.0]. The rotation is specified
+                   in terms of yaw (around z-axis), pitch (around y) and roll (around x) angle: --rot-showers UNIT:yaw,pitch,roll
+
+ -wgt      Weight the events according to interaction probabilty to increase statistics ((GENIE option)) [default: 1]
+           Possible choices are: 
+             1)  -wgt 0 
+               events are not weighted.
+             2)  -wgt 1 
+               events are weighted according to a maximum probability.
+             3)  -wgt 2 
+               events are weighted because they are force to interact in the volume (available since GENIE 3.2.0).
+
+
+ -h        Display this help and exit.
+
+
+ **Environmental Parameters**
+
+ GSeaGen environmental parameters: 
+
+ GSEAGEN:     pointing to the top directory of the code [mandatory]. 
+
+ GMURNGFL:    pointing to file with max muon ranges [default: GMURNGFL = $GSEAGEN/dat/muon_rmax_music.dat]. 
+
+ MEDIACOMP:   overriding the default composition for target media: SeaWater, Rock, Mantle, Crust.
+                  Eg. MEDIACOMP = $GSEAGEN/dat/MediaComposition.xml 
+
+ PROPOSALCONF: pointing to the PROPOSAL configuration file. Default inputs are used if the env. parameter does not exist.
+                  Eg. PROPOSALCONF = proposaldir/resources/config.json
+
+ SYSTLIST:    pointing to the file defining the systematic parameters. The calculation is activated if the env. parameter exists.
+                  Eg. SYSTLIST = $GSEAGEN/dat/SystParams.xml 
+
+ DEFPARAM:    pointing to the file defining the new default valus of input systematic parameters. Values will be changed with running options if used.
+                  Eg. DEFPARAM = $GSEAGEN/dat/SystParams.xml 
+
+ Based on GENIE, gSeaGen accepts all standard GENIE environmental parameters. For examples: 
+
+ GALGCONF:    overriding the default configuration folder [default: GALGCONF = $GENIE/config]
+                  Eg. GALGCONF = $GENIE/config 
+              to use the default GENIE configuration folder. 
+
+ GXMLPATH:    to get user XML input files using GXMLPATH + default locations.
