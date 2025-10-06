@@ -14,7 +14,7 @@ git status
 
 ## stage and commit
 git add <files>                 # or: git add -A
-git commit -m "msg: concise but specific"
+git commit -m "Update for detector response"
 
 ## push (main), or push a feature branch if you prefer PRs
 git push origin main
