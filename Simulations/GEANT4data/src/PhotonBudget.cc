@@ -20,7 +20,7 @@
 
 static G4ThreeVector g_x0(0,0,0);
 static double g_t0_ns = 0.0;
-+static IORunAction* gIO = nullptr;      // NEW: I/O owner (set from ActionInitialization)
+static IORunAction* gIO = nullptr;      // NEW: I/O owner (set from ActionInitialization)
 
 void PrimaryInfo::Set(const G4ThreeVector& x0, double t0_ns){ g_x0=x0; g_t0_ns=t0_ns; }
 const G4ThreeVector& PrimaryInfo::X0(){ return g_x0; }

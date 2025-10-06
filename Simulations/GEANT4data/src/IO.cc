@@ -3,7 +3,7 @@
 #include <TNamed.h>
 
 IORunAction::IORunAction(const std::string& path, const DigitizerParams& P)
-: G4UserRunAction(), outpath_(path), dig(P) {}
+: G4UserRunAction(), dig(P), outpath_(path) {}
 
 void IORunAction::BeginOfRunAction(const G4Run*) {
   f = TFile::Open(outpath_.c_str(), "RECREATE");
