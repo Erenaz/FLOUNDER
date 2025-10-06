@@ -8,7 +8,7 @@ yaml_text = dedent("""
 # Author: (auto-generated)
 # Notes: Copy/paste steps as-is. Paths are set for your workstation; change only if your layout changes.
 
-project_root: "/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data"
+project_root: "/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector"
 
 env:
   description: |
@@ -27,7 +27,7 @@ env:
     export G4_ZSHIFT_MM=-20000
     echo "FLOUNDER environment loaded (single-threaded mode)"
   how_to_load: |
-    cd /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data
+    cd /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector
     source ./GEANT4.sh
   sanity_checks:
     - geant4-config --version --features
