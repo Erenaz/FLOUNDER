@@ -1,0 +1,169 @@
+# Create a YAML instruction file for the user with a clear, reproducible Day-1 runbook.
+from textwrap import dedent
+
+yaml_text = dedent("""
+# FLOUNDER — Day-1 GEANT4 Runbook (macOS, ToolsSG viewer, ROOT single-threaded)
+# Purpose: Fully reproducible commands to validate gSeaGen → Geant4 hand-off,
+# generate Day-1 screenshots, and perform 10-event hand-checks.
+# Author: (auto-generated)
+# Notes: Copy/paste steps as-is. Paths are set for your workstation; change only if your layout changes.
+
+project_root: "/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data"
+
+env:
+  description: |
+    Load ROOT and Geant4, force single-threaded mode to avoid ROOT/MT issues,
+    and expose file paths used by the app.
+  file: "GEANT4.sh"
+  content_preview: |
+    #!/bin/bash
+    export G4FORCE_RUN_MANAGER_TYPE=Serial
+    source /usr/local/Cellar/root/6.36.04/bin/thisroot.sh
+    export G4INSTALL="$HOME/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install"
+    source "$G4INSTALL/bin/geant4.sh"
+    export PATH="$G4INSTALL/bin:$PATH"
+    export G4_GDML="/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/fln_geo.gdml"
+    export G4_ROOTRACKER="/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/Data/hand_off/handoff_pilot_muCC_200.gtrac.root"
+    export G4_ZSHIFT_MM=-20000
+    echo "FLOUNDER environment loaded (single-threaded mode)"
+  how_to_load: |
+    cd /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data
+    source ./GEANT4.sh
+  sanity_checks:
+    - geant4-config --version --features
+    - root-config --version --prefix
+    - 'test -f "$G4_GDML" && echo GDML:OK || echo GDML:Missing'
+    - 'test -f "$G4_ROOTRACKER" && echo ROOTRACKER:OK || echo ROOTRACKER:Missing'
+
+build:
+  description: Configure & compile the flndr_day1 app (CMake).
+  prerequisites:
+    - 'brew install qt@5 xerces-c zlib  # already installed is fine'
+  env_hints:
+    - 'export CMAKE_PREFIX_PATH="$(brew --prefix qt@5):$(brew --prefix xerces-c):$(brew --prefix zlib):$CMAKE_PREFIX_PATH"'
+    - 'export ZLIB_ROOT="$(brew --prefix zlib)"'
+  commands:
+    - rm -rf build
+    - cmake -S . -B build -DGeant4_DIR="$G4INSTALL/lib/cmake/Geant4" -DROOT_DIR="$ROOTSYS/lib/cmake/ROOT" -DZLIB_ROOT="$ZLIB_ROOT"
+    - cmake --build build -j
+  expected_output:
+    - 'Executable: build/flndr_day1'
+    - 'No link errors; Geant4 version printed at runtime'
+
+materials_override:
+  why: |
+    GDML defined "Vacuum" with ρ=0; Geant4 patched to 1e-25 g/cm³. For clarity (and to prep optics), set the world explicitly to G4_Galactic and the can to G4_WATER in code.
+  where: "src/DetectorConstruction.cc"
+  patch: |
+    // After: auto* world = fParser.GetWorldVolume();
+    #include <G4NistManager.hh>
+    auto* nist = G4NistManager::Instance();
+    if (auto* gal = nist->FindOrBuildMaterial("G4_Galactic"))
+      world->GetLogicalVolume()->SetMaterial(gal);
+    if (auto* canLV = fParser.GetVolume("CanLV")) {
+      if (auto* water = nist->FindOrBuildMaterial("G4_WATER"))
+        canLV->SetMaterial(water);
+    }
+  rebuild:
+    - cmake --build build -j
+
+macros:
+  vis_offscreen_mac:
+    file: "macros/vis_offscreen.mac"
+    content: |
+      /run/initialize
+      /vis/open TSG_OFFSCREEN 1400x1000
+      /vis/drawVolume
+      /vis/scene/add/axes 0 0 0 2000 mm
+      /vis/scene/add/trajectories smooth
+      /tracking/storeTrajectory 1
+      /vis/viewer/set/style surface
+      /vis/tsg/offscreen/set/format zb_png
+      /vis/tsg/offscreen/set/file auto event
+      /run/beamOn 1
+      /vis/viewer/rebuild
+      /run/beamOn 1
+      /vis/viewer/rebuild
+      /run/beamOn 1
+      /vis/viewer/rebuild
+    run: './build/flndr_day1 macros/vis_offscreen.mac'
+    outputs: ["event1.png", "event2.png", "event3.png"]
+
+  vis_multiview_mac:
+    file: "macros/vis_multiview.mac"
+    content: |
+      /run/initialize
+      /vis/open TSG_OFFSCREEN 1400x1000
+      /vis/drawVolume
+      /vis/scene/add/axes 0 0 0 2000 mm
+      /vis/scene/add/trajectories smooth
+      /tracking/storeTrajectory 1
+      /vis/viewer/set/style surface
+      /vis/tsg/offscreen/set/format zb_png
+      /vis/tsg/offscreen/set/file explicit
+      /rootracker/eventIndex 0
+      /run/beamOn 1
+      /vis/tsg/offscreen/set/file event0_persp.png
+      /vis/viewer/set/viewpointThetaPhi 60 40
+      /vis/viewer/rebuild
+      /vis/tsg/offscreen/set/file event0_top.png
+      /vis/viewer/set/viewpointThetaPhi 0 0
+      /vis/viewer/rebuild
+      /vis/tsg/offscreen/set/file event0_side.png
+      /vis/viewer/set/viewpointThetaPhi 90 0
+      /vis/viewer/rebuild
+    run: './build/flndr_day1 macros/vis_multiview.mac'
+    outputs: ["event0_persp.png", "event0_top.png", "event0_side.png"]
+
+handcheck:
+  goal: Validate 10 events (vertex mm, unit vector within 1°, energy within 1%).
+  commands:
+    - |
+      for i in 0 1 2 3 4 5 6 7 8 9; do
+        ./build/flndr_day1 <<EOF
+      /vis/open TSG_OFFSCREEN 400x300
+      /vis/drawVolume
+      /rootracker/eventIndex $i
+      /run/beamOn 1
+      EOF
+      done | tee docs/day1/handcheck.log
+  compare_against: "/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/Data/hand_off/handoff_pilot_muCC_200.gtrac.root"
+  units:
+    vertex: "mm (was meters in ROOT)"
+    momentum_energy: "MeV (was GeV in ROOT)"
+    time: "ns (was seconds in ROOT)"
+    z_mapping: "apply G4_ZSHIFT_MM = -20000 to compare z"
+  acceptance:
+    vertex_mm: "<= 1–2 mm (tolerance of manual readback)"
+    direction_deg: "<= 1 degree"
+    energy_rel: "<= 1 %"
+
+artifacts:
+  where: "docs/day1"
+  files:
+    - event1.png
+    - event2.png
+    - event3.png
+    - handcheck.log
+    - env.txt
+  generate_env_txt:
+    - 'echo "Geant4: $(geant4-config --version) features: $(geant4-config --features)" > docs/day1/env.txt'
+    - 'echo "ROOT: $(root-config --version) prefix: $(root-config --prefix)" >> docs/day1/env.txt'
+    - 'echo "G4FORCE_RUN_MANAGER_TYPE=$G4FORCE_RUN_MANAGER_TYPE" >> docs/day1/env.txt'
+
+troubleshooting:
+  - symptom: "Viewer command '/vis/open OGL' fails"
+    fix: "Use ToolsSG drivers: 'TSG_OFFSCREEN' (batch) or 'TSGQt' (interactive) and '/vis/tsg/...' export commands."
+  - symptom: "ROOT fatal: gInterpreter not initialized / plugins missing"
+    fix: "Use Homebrew ROOT and source its thisroot.sh; avoid custom ROOT build with broken -isysroot."
+  - symptom: "Zlib >= 1.3.1 required"
+    fix: "brew install zlib; set ZLIB_ROOT and add brew zlib to CMAKE_PREFIX_PATH before configuring."
+  - symptom: "Vertices outside can"
+    fix: "Adjust G4_ZSHIFT_MM by ±1000–2000 mm until vertices are inside cylinder; re-run handcheck."
+
+next_steps_day2:
+  - "Attach optical properties to G4_WATER: n(lambda), absorption(lambda), scattering(lambda)."
+  - "Load from text/CSV at runtime; log min/max and wavelength grid size."
+  - "Define PMT QE(lambda) and report effective QE in 400–450 nm."
+  - "Select physics list (FTFP_BERT + optical) and production cuts; verify Cherenkov photons > 0."
+""")

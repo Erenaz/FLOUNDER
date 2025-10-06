@@ -1,0 +1,4 @@
+events=2000
+firstΔt(ns): mean=5.8973  std=247.2132  n=1908
+median wall_frac=0.9762
+n with Nwall>Nprod=0  n with Npmt>Nprod=0

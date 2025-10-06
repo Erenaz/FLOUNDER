@@ -1,0 +1,10 @@
+timestamp: "20250929_131756"
+binary: "./build/flndr_day2"
+macro: "macros/hc_headless.mac"
+log: "optics_init_20250929_131756.log"
+checksums: "checksums_20250929_131756.txt"
+optics:
+  water: "[Optics] Water optics: λ=[300.0,600.0] nm (N=31); n=[1.3296,1.3430]; L_abs=[25.0,82.0] m; L_scat=[90.0,150.0] m"
+  pmt_qe: "[Optics] PMT QE: λ=[300.0,600.0] nm (N=31); <QE>_400–450nm = 27.5 %"
+  photon_events: 10
+return_code: 0

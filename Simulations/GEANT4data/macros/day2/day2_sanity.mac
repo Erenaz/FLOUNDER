@@ -1,0 +1,6 @@
+/run/initialize
+/vis/open TSG_OFFSCREEN 800x600
+/vis/drawVolume
+/vis/viewer/set/autoRefresh false
+/vis/viewer/refresh
+/run/beamOn 1

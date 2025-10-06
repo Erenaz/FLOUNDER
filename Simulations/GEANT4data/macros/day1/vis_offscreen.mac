@@ -1,0 +1,17 @@
+/run/initialize
+/vis/open TSG_OFFSCREEN 1400x1000
+/vis/drawVolume
+/vis/scene/add/axes 0 0 0 2000 mm
+/vis/scene/add/trajectories smooth
+/tracking/storeTrajectory 1
+/vis/viewer/set/style surface
+
+/vis/tsg/offscreen/set/format zb_png
+/vis/tsg/offscreen/set/file auto event
+
+/run/beamOn 1
+/vis/viewer/rebuild
+/run/beamOn 1
+/vis/viewer/rebuild
+/run/beamOn 1
+/vis/viewer/rebuild

@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<gdml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://service-spi.web.cern.ch/service-spi/app/releases/GDML/schema/gdml.xsd">
+  <define>
+    <position name="Detector_1inTopVolumepos" x="0" y="0" z="0" unit="cm"/>
+  </define>
+  <materials>
+    <material name="Vacuum" Z="1">
+      <D unit="g/cm3" value="0"/>
+      <atom unit="g/mole" value="0"/>
+    </material>
+    <material name="Water" Z="10">
+      <D unit="g/cm3" value="1"/>
+      <atom unit="g/mole" value="18.015000000000001"/>
+    </material>
+  </materials>
+  <solids>
+    <box name="TopVolume" x="600" y="600" z="8000" lunit="cm"/>
+    <tube name="Detector0x1" rmin="0" rmax="150" z="4000" startphi="0" deltaphi="360" aunit="deg" lunit="cm"/>
+  </solids>
+  <structure>
+    <volume name="Detector">
+      <materialref ref="Water"/>
+      <solidref ref="Detector0x1"/>
+    </volume>
+    <volume name="TopVolume">
+      <materialref ref="Vacuum"/>
+      <solidref ref="TopVolume"/>
+      <physvol name="Detector_1" copynumber="1">
+        <volumeref ref="Detector"/>
+        <positionref ref="Detector_1inTopVolumepos"/>
+      </physvol>
+    </volume>
+  </structure>
+  <setup name="default" version="1.0">
+    <world ref="TopVolume"/>
+  </setup>
+</gdml>

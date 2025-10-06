@@ -1,0 +1,3 @@
+/run/initialize
+/rootracker/eventIndex @IDX
+/run/beamOn 1

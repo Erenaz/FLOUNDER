@@ -1,0 +1,3 @@
+## checksums (sha256)
+82dc25e3affa3c750c7e6faf0ff584a76234be52d6a649740d7a939df56cabc4  optics/pmt_qe.csv
+b162f447acbaaf4745bbe6b8089ebd36cb88e4364727b67e5a76ca5e2b037f23  optics/water_properties.csv

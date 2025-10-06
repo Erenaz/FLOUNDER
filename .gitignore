@@ -1,0 +1,14 @@
+# macOS metadata
+.DS_Store
+
+# Logs and errors
+*.log
+*.err
+
+# Simulation outputs
+Simulations/Data/
+Simulations/*.root
+Simulations/*.binstat
+
+# Notebook checkpoints
+**/.ipynb_checkpoints/

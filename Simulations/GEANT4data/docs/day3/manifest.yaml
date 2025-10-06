@@ -1,0 +1,12 @@
+day: 3
+inputs:
+  rootracker: handoff_pilot_muCC_200.gtrac.root
+  gdml: fln_geo.gdml
+build:
+  geant4_dir: "$G4INSTALL/lib/cmake/Geant4"
+  root_dir: "$ROOTSYS/lib/cmake/ROOT"
+  zlib_root: "$ZLIB_ROOT"
+binary: flndr_day2
+outputs:
+  csv: docs/day3/event_budget.csv
+  log: docs/day3/run_day3.log

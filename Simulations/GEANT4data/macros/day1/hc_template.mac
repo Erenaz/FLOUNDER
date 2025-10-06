@@ -1,0 +1,5 @@
+/run/initialize
+/vis/open TSG_OFFSCREEN 400x300
+/vis/drawVolume
+/rootracker/eventIndex @IDX
+/run/beamOn 1

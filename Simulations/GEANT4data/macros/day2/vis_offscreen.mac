@@ -1,0 +1,7 @@
+/run/initialize
+/vis/open TSG_OFFSCREEN 1024x768
+/vis/drawVolume
+/vis/viewer/set/autoRefresh false
+/vis/viewer/refresh
+# optional; only if supported in your build:
+# /vis/viewer/save flndr_day2.png
