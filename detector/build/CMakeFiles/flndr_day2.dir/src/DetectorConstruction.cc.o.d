@@ -1,6 +1,6 @@
 CMakeFiles/flndr_day2.dir/src/DetectorConstruction.cc.o: \
-  /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data/src/DetectorConstruction.cc \
-  /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data/include/DetectorConstruction.hh \
+  /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/DetectorConstruction.cc \
+  /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/include/DetectorConstruction.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4VUserDetectorConstruction.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/globals.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4ios.hh \
@@ -839,152 +839,152 @@ CMakeFiles/flndr_day2.dir/src/DetectorConstruction.cc.o: \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/CLHEP/Vector/RotationZ.icc \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/CLHEP/Vector/Rotation.icc \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4GDMLRead.hh \
-  /usr/local/opt/xerces-c/include/xercesc/parsers/XercesDOMParser.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/parsers/AbstractDOMParser.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMDocument.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/XercesDefs.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/Xerces_autoconf_config.hpp \
+  /usr/local/include/xercesc/parsers/XercesDOMParser.hpp \
+  /usr/local/include/xercesc/parsers/AbstractDOMParser.hpp \
+  /usr/local/include/xercesc/dom/DOMDocument.hpp \
+  /usr/local/include/xercesc/util/XercesDefs.hpp \
+  /usr/local/include/xercesc/util/Xerces_autoconf_config.hpp \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/inttypes.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/17/include/inttypes.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/inttypes.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_inttypes.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/xlocale/_inttypes.h \
-  /usr/local/opt/xerces-c/include/xercesc/util/XercesVersion.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMNode.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMDocumentRange.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMDocumentTraversal.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMNodeFilter.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMXPathEvaluator.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMXPathResult.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/framework/XMLDocumentHandler.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/RefVectorOf.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/BaseRefVectorOf.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/ArrayIndexOutOfBoundsException.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/XMLException.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/XMemory.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/XMLExceptMsgs.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMError.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/XMLUni.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/framework/XMLErrorReporter.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/XMLEnumerator.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/PlatformUtils.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/PanicHandler.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/XMLFileMgr.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/XMLMutexMgr.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/framework/MemoryManager.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/BaseRefVectorOf.c \
-  /usr/local/opt/xerces-c/include/xercesc/util/RefVectorOf.c \
-  /usr/local/opt/xerces-c/include/xercesc/framework/XMLAttr.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/QName.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/XMLString.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/framework/XMLBuffer.hpp \
+  /usr/local/include/xercesc/util/XercesVersion.hpp \
+  /usr/local/include/xercesc/dom/DOMNode.hpp \
+  /usr/local/include/xercesc/dom/DOMDocumentRange.hpp \
+  /usr/local/include/xercesc/dom/DOMDocumentTraversal.hpp \
+  /usr/local/include/xercesc/dom/DOMNodeFilter.hpp \
+  /usr/local/include/xercesc/dom/DOMXPathEvaluator.hpp \
+  /usr/local/include/xercesc/dom/DOMXPathResult.hpp \
+  /usr/local/include/xercesc/framework/XMLDocumentHandler.hpp \
+  /usr/local/include/xercesc/util/RefVectorOf.hpp \
+  /usr/local/include/xercesc/util/BaseRefVectorOf.hpp \
+  /usr/local/include/xercesc/util/ArrayIndexOutOfBoundsException.hpp \
+  /usr/local/include/xercesc/util/XMLException.hpp \
+  /usr/local/include/xercesc/util/XMemory.hpp \
+  /usr/local/include/xercesc/util/XMLExceptMsgs.hpp \
+  /usr/local/include/xercesc/dom/DOMError.hpp \
+  /usr/local/include/xercesc/util/XMLUni.hpp \
+  /usr/local/include/xercesc/framework/XMLErrorReporter.hpp \
+  /usr/local/include/xercesc/util/XMLEnumerator.hpp \
+  /usr/local/include/xercesc/util/PlatformUtils.hpp \
+  /usr/local/include/xercesc/util/PanicHandler.hpp \
+  /usr/local/include/xercesc/util/XMLFileMgr.hpp \
+  /usr/local/include/xercesc/util/XMLMutexMgr.hpp \
+  /usr/local/include/xercesc/framework/MemoryManager.hpp \
+  /usr/local/include/xercesc/util/BaseRefVectorOf.c \
+  /usr/local/include/xercesc/util/RefVectorOf.c \
+  /usr/local/include/xercesc/framework/XMLAttr.hpp \
+  /usr/local/include/xercesc/util/QName.hpp \
+  /usr/local/include/xercesc/util/XMLString.hpp \
+  /usr/local/include/xercesc/framework/XMLBuffer.hpp \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/assert.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/_static_assert.h \
-  /usr/local/opt/xerces-c/include/xercesc/util/XMLUniDefs.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/internal/XSerializable.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/internal/XSerializeEngine.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/RefHashTableOf.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/Hashers.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/IllegalArgumentException.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/NoSuchElementException.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/RuntimeException.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/RefHashTableOf.c \
-  /usr/local/opt/xerces-c/include/xercesc/util/Janitor.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/Janitor.c \
-  /usr/local/opt/xerces-c/include/xercesc/util/NullPointerException.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/ValueVectorOf.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/ValueVectorOf.c \
-  /usr/local/opt/xerces-c/include/xercesc/internal/XSerializationException.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/internal/XProtoType.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/framework/XMLAttDef.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/validators/datatype/DatatypeValidator.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/KVStringPair.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/regx/RegularExpression.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/RefArrayVectorOf.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/RefArrayVectorOf.c \
-  /usr/local/opt/xerces-c/include/xercesc/util/regx/Op.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/regx/TokenFactory.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/regx/Token.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/Mutexes.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/regx/BMPattern.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/regx/OpFactory.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/regx/RegxUtil.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/validators/schema/SchemaSymbols.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/framework/psvi/XSSimpleTypeDefinition.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/framework/psvi/XSTypeDefinition.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/framework/psvi/XSObject.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/framework/psvi/XSConstants.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/framework/ValidationContext.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/NameIdPool.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/NameIdPool.c \
-  /usr/local/opt/xerces-c/include/xercesc/framework/XMLEntityHandler.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/SecurityManager.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/ValueStackOf.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/EmptyStackException.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/util/ValueStackOf.c \
-  /usr/local/opt/xerces-c/include/xercesc/validators/DTD/DocTypeHandler.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/framework/XMLNotationDecl.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/validators/DTD/DTDAttDef.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/validators/DTD/DTDElementDecl.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/framework/XMLElementDecl.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/framework/XMLAttDefList.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/framework/XMLContentModel.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/validators/DTD/DTDEntityDecl.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/framework/XMLEntityDecl.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMDocumentType.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/framework/XMLBufferMgr.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/framework/psvi/PSVIHandler.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/validators/common/Grammar.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/sax/HandlerBase.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/sax/DocumentHandler.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/sax/DTDHandler.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/sax/EntityResolver.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/sax/ErrorHandler.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/sax/SAXParseException.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/sax/SAXException.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOM.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMAttr.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMCDATASection.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMText.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMCharacterData.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMComment.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMDocumentFragment.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMElement.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMEntity.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMEntityReference.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMException.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMImplementation.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMImplementationLS.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMLSException.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMRangeException.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMNamedNodeMap.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMNodeList.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMNotation.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMProcessingInstruction.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMNodeIterator.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMRange.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMTreeWalker.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMLSParser.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMConfiguration.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMStringList.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMLSParserFilter.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMLSResourceResolver.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMErrorHandler.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMImplementationList.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMImplementationRegistry.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMImplementationSource.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMLSInput.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMLSOutput.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMLocator.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMPSVITypeInfo.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMTypeInfo.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMUserDataHandler.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMLSSerializer.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMLSSerializerFilter.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMXPathNSResolver.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMXPathException.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMXPathExpression.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/dom/DOMXPathNamespace.hpp \
+  /usr/local/include/xercesc/util/XMLUniDefs.hpp \
+  /usr/local/include/xercesc/internal/XSerializable.hpp \
+  /usr/local/include/xercesc/internal/XSerializeEngine.hpp \
+  /usr/local/include/xercesc/util/RefHashTableOf.hpp \
+  /usr/local/include/xercesc/util/Hashers.hpp \
+  /usr/local/include/xercesc/util/IllegalArgumentException.hpp \
+  /usr/local/include/xercesc/util/NoSuchElementException.hpp \
+  /usr/local/include/xercesc/util/RuntimeException.hpp \
+  /usr/local/include/xercesc/util/RefHashTableOf.c \
+  /usr/local/include/xercesc/util/Janitor.hpp \
+  /usr/local/include/xercesc/util/Janitor.c \
+  /usr/local/include/xercesc/util/NullPointerException.hpp \
+  /usr/local/include/xercesc/util/ValueVectorOf.hpp \
+  /usr/local/include/xercesc/util/ValueVectorOf.c \
+  /usr/local/include/xercesc/internal/XSerializationException.hpp \
+  /usr/local/include/xercesc/internal/XProtoType.hpp \
+  /usr/local/include/xercesc/framework/XMLAttDef.hpp \
+  /usr/local/include/xercesc/validators/datatype/DatatypeValidator.hpp \
+  /usr/local/include/xercesc/util/KVStringPair.hpp \
+  /usr/local/include/xercesc/util/regx/RegularExpression.hpp \
+  /usr/local/include/xercesc/util/RefArrayVectorOf.hpp \
+  /usr/local/include/xercesc/util/RefArrayVectorOf.c \
+  /usr/local/include/xercesc/util/regx/Op.hpp \
+  /usr/local/include/xercesc/util/regx/TokenFactory.hpp \
+  /usr/local/include/xercesc/util/regx/Token.hpp \
+  /usr/local/include/xercesc/util/Mutexes.hpp \
+  /usr/local/include/xercesc/util/regx/BMPattern.hpp \
+  /usr/local/include/xercesc/util/regx/OpFactory.hpp \
+  /usr/local/include/xercesc/util/regx/RegxUtil.hpp \
+  /usr/local/include/xercesc/validators/schema/SchemaSymbols.hpp \
+  /usr/local/include/xercesc/framework/psvi/XSSimpleTypeDefinition.hpp \
+  /usr/local/include/xercesc/framework/psvi/XSTypeDefinition.hpp \
+  /usr/local/include/xercesc/framework/psvi/XSObject.hpp \
+  /usr/local/include/xercesc/framework/psvi/XSConstants.hpp \
+  /usr/local/include/xercesc/framework/ValidationContext.hpp \
+  /usr/local/include/xercesc/util/NameIdPool.hpp \
+  /usr/local/include/xercesc/util/NameIdPool.c \
+  /usr/local/include/xercesc/framework/XMLEntityHandler.hpp \
+  /usr/local/include/xercesc/util/SecurityManager.hpp \
+  /usr/local/include/xercesc/util/ValueStackOf.hpp \
+  /usr/local/include/xercesc/util/EmptyStackException.hpp \
+  /usr/local/include/xercesc/util/ValueStackOf.c \
+  /usr/local/include/xercesc/validators/DTD/DocTypeHandler.hpp \
+  /usr/local/include/xercesc/framework/XMLNotationDecl.hpp \
+  /usr/local/include/xercesc/validators/DTD/DTDAttDef.hpp \
+  /usr/local/include/xercesc/validators/DTD/DTDElementDecl.hpp \
+  /usr/local/include/xercesc/framework/XMLElementDecl.hpp \
+  /usr/local/include/xercesc/framework/XMLAttDefList.hpp \
+  /usr/local/include/xercesc/framework/XMLContentModel.hpp \
+  /usr/local/include/xercesc/validators/DTD/DTDEntityDecl.hpp \
+  /usr/local/include/xercesc/framework/XMLEntityDecl.hpp \
+  /usr/local/include/xercesc/dom/DOMDocumentType.hpp \
+  /usr/local/include/xercesc/framework/XMLBufferMgr.hpp \
+  /usr/local/include/xercesc/framework/psvi/PSVIHandler.hpp \
+  /usr/local/include/xercesc/validators/common/Grammar.hpp \
+  /usr/local/include/xercesc/sax/HandlerBase.hpp \
+  /usr/local/include/xercesc/sax/DocumentHandler.hpp \
+  /usr/local/include/xercesc/sax/DTDHandler.hpp \
+  /usr/local/include/xercesc/sax/EntityResolver.hpp \
+  /usr/local/include/xercesc/sax/ErrorHandler.hpp \
+  /usr/local/include/xercesc/sax/SAXParseException.hpp \
+  /usr/local/include/xercesc/sax/SAXException.hpp \
+  /usr/local/include/xercesc/dom/DOM.hpp \
+  /usr/local/include/xercesc/dom/DOMAttr.hpp \
+  /usr/local/include/xercesc/dom/DOMCDATASection.hpp \
+  /usr/local/include/xercesc/dom/DOMText.hpp \
+  /usr/local/include/xercesc/dom/DOMCharacterData.hpp \
+  /usr/local/include/xercesc/dom/DOMComment.hpp \
+  /usr/local/include/xercesc/dom/DOMDocumentFragment.hpp \
+  /usr/local/include/xercesc/dom/DOMElement.hpp \
+  /usr/local/include/xercesc/dom/DOMEntity.hpp \
+  /usr/local/include/xercesc/dom/DOMEntityReference.hpp \
+  /usr/local/include/xercesc/dom/DOMException.hpp \
+  /usr/local/include/xercesc/dom/DOMImplementation.hpp \
+  /usr/local/include/xercesc/dom/DOMImplementationLS.hpp \
+  /usr/local/include/xercesc/dom/DOMLSException.hpp \
+  /usr/local/include/xercesc/dom/DOMRangeException.hpp \
+  /usr/local/include/xercesc/dom/DOMNamedNodeMap.hpp \
+  /usr/local/include/xercesc/dom/DOMNodeList.hpp \
+  /usr/local/include/xercesc/dom/DOMNotation.hpp \
+  /usr/local/include/xercesc/dom/DOMProcessingInstruction.hpp \
+  /usr/local/include/xercesc/dom/DOMNodeIterator.hpp \
+  /usr/local/include/xercesc/dom/DOMRange.hpp \
+  /usr/local/include/xercesc/dom/DOMTreeWalker.hpp \
+  /usr/local/include/xercesc/dom/DOMLSParser.hpp \
+  /usr/local/include/xercesc/dom/DOMConfiguration.hpp \
+  /usr/local/include/xercesc/dom/DOMStringList.hpp \
+  /usr/local/include/xercesc/dom/DOMLSParserFilter.hpp \
+  /usr/local/include/xercesc/dom/DOMLSResourceResolver.hpp \
+  /usr/local/include/xercesc/dom/DOMErrorHandler.hpp \
+  /usr/local/include/xercesc/dom/DOMImplementationList.hpp \
+  /usr/local/include/xercesc/dom/DOMImplementationRegistry.hpp \
+  /usr/local/include/xercesc/dom/DOMImplementationSource.hpp \
+  /usr/local/include/xercesc/dom/DOMLSInput.hpp \
+  /usr/local/include/xercesc/dom/DOMLSOutput.hpp \
+  /usr/local/include/xercesc/dom/DOMLocator.hpp \
+  /usr/local/include/xercesc/dom/DOMPSVITypeInfo.hpp \
+  /usr/local/include/xercesc/dom/DOMTypeInfo.hpp \
+  /usr/local/include/xercesc/dom/DOMUserDataHandler.hpp \
+  /usr/local/include/xercesc/dom/DOMLSSerializer.hpp \
+  /usr/local/include/xercesc/dom/DOMLSSerializerFilter.hpp \
+  /usr/local/include/xercesc/dom/DOMXPathNSResolver.hpp \
+  /usr/local/include/xercesc/dom/DOMXPathException.hpp \
+  /usr/local/include/xercesc/dom/DOMXPathExpression.hpp \
+  /usr/local/include/xercesc/dom/DOMXPathNamespace.hpp \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4GDMLEvaluator.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4Evaluator.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/CLHEP/Evaluator/Evaluator.h \
@@ -1127,8 +1127,8 @@ CMakeFiles/flndr_day2.dir/src/DetectorConstruction.cc.o: \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4GDMLWriteMaterials.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4GDMLWriteDefine.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4GDMLWrite.hh \
-  /usr/local/opt/xerces-c/include/xercesc/framework/LocalFileFormatTarget.hpp \
-  /usr/local/opt/xerces-c/include/xercesc/framework/XMLFormatter.hpp \
+  /usr/local/include/xercesc/framework/LocalFileFormatTarget.hpp \
+  /usr/local/include/xercesc/framework/XMLFormatter.hpp \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4STRead.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4GDMLMessenger.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4UImessenger.hh \
@@ -1166,10 +1166,8 @@ CMakeFiles/flndr_day2.dir/src/DetectorConstruction.cc.o: \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4SafetyHelper.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4TransportationManager.icc \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4GDMLParser.icc \
-  /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data/include/OpticalInit.hh \
-  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4LogicalVolumeStore.hh \
-  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4VStoreNotifier.hh \
-  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4VNotifier.hh \
+  /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/include/OpticalInit.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4Colour.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4NistManager.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4ICRU90StoppingData.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4Material.hh \
@@ -1190,6 +1188,10 @@ CMakeFiles/flndr_day2.dir/src/DetectorConstruction.cc.o: \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4NistMaterialBuilder.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4Pow.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4Exp.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4PVPlacement.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4PhysicalVolumeStore.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4VStoreNotifier.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4VNotifier.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4RunManager.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4Event.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/evtdefs.hh \
@@ -1309,10 +1311,21 @@ CMakeFiles/flndr_day2.dir/src/DetectorConstruction.cc.o: \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4RunManagerKernel.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/rundefs.hh \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/list \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4SDManager.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4HCtable.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4SDStructure.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4VSensitiveDetector.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4CollectionNameVector.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4VHit.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4VReadOutGeometry.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4SensitiveVolumeList.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4VSDFilter.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4SystemOfUnits.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4VisAttributes.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/graphics_reps_defs.hh \
-  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4Colour.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4Color.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4VisAttributes.icc \
-  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4PhysicalVolumeStore.hh
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4LogicalVolumeStore.hh \
+  /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/include/PMTSD.hh \
+  /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/include/PMTHit.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4THitsCollection.hh

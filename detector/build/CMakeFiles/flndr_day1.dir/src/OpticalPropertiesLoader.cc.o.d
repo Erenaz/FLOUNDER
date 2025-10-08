@@ -1,6 +1,6 @@
 CMakeFiles/flndr_day1.dir/src/OpticalPropertiesLoader.cc.o: \
-  /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data/src/OpticalPropertiesLoader.cc \
-  /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data/include/OpticalPropertiesLoader.hh \
+  /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/OpticalPropertiesLoader.cc \
+  /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/include/OpticalPropertiesLoader.hh \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/string \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/max.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/comp.h \

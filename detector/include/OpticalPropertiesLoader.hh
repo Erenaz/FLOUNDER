@@ -19,6 +19,8 @@ struct PMTSummary {
   G4double lambda_min_nm = 0, lambda_max_nm = 0;
   size_t   npoints = 0;
   G4double mean_qe_400_450 = 0; // (fraction, not %)
+  std::vector<G4double> energy;      // photon energies (ascending) [GeV]
+  std::vector<G4double> efficiency;  // QE as fraction (matching energy grid)
 };
 
 class OpticalPropertiesLoader {

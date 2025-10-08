@@ -7,9 +7,12 @@ public:
   PhotonCountEventAction() : count_(0) {}
   void BeginOfEventAction(const G4Event*) override { count_ = 0; }
   void EndOfEventAction(const G4Event*) override;
-  void Inc() { ++count_; }
+  void Inc();
+  static void ResetTotal();
+  static unsigned long long GetTotal();
 private:
   unsigned long long count_;
+  static unsigned long long total_;
 };
 
 class PhotonCountStackingAction : public G4UserStackingAction {

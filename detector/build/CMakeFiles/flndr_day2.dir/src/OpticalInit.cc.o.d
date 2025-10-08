@@ -1,6 +1,6 @@
 CMakeFiles/flndr_day2.dir/src/OpticalInit.cc.o: \
-  /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data/src/OpticalInit.cc \
-  /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data/include/OpticalInit.hh \
+  /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/OpticalInit.cc \
+  /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/include/OpticalInit.hh \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/string \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/max.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/comp.h \
@@ -662,7 +662,7 @@ CMakeFiles/flndr_day2.dir/src/OpticalInit.cc.o: \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/pstl.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/sample.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/bit \
-  /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data/include/OpticalPropertiesLoader.hh \
+  /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/include/OpticalPropertiesLoader.hh \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/vector \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__vector/comparison.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__algorithm/lexicographical_compare_three_way.h \

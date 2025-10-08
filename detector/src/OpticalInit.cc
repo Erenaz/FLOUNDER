@@ -13,8 +13,14 @@
 #include "G4OpticalSurface.hh"
 #include "G4PhysicalVolumeStore.hh"
 #include "G4SystemOfUnits.hh"
+#include "G4ios.hh"
 
 using std::cout; using std::endl;
+
+namespace {
+  PMTSummary gPMTSummary;
+  G4OpticalSurface* gPhotocathodeSurface = nullptr;
+}
 
 namespace OpticalInit {
 
@@ -35,12 +41,20 @@ namespace OpticalInit {
                        G4VPhysicalVolume* canPV) {
     try {
       // 1) Build and attach water optical table
-      auto* water = G4Material::GetMaterial("G4_WATER");
+      auto* water = G4Material::GetMaterial("G4_WATER", true);
       if (!water) { std::cerr << "G4_WATER not found.\n"; return false; }
 
       WaterOpticsSummary ws;
       auto* mpt_water = OpticalPropertiesLoader::BuildWaterMPTFromCSV(water_csv, ws);
       water->SetMaterialPropertiesTable(mpt_water);
+      {
+        const auto hasN = mpt_water && mpt_water->GetProperty("RINDEX");
+        const auto hasA = mpt_water && mpt_water->GetProperty("ABSLENGTH");
+        const auto hasR = mpt_water && mpt_water->GetProperty("RAYLEIGH");
+        G4cout << "[OPT] water MPT set: n=" << (hasN ? 1 : 0)
+               << " abs=" << (hasA ? 1 : 0)
+               << " ray=" << (hasR ? 1 : 0) << G4endl;
+      }
       {
         auto* mpt = water->GetMaterialPropertiesTable();
         auto* rindex   = mpt ? mpt->GetProperty("RINDEX")    : nullptr;
@@ -75,6 +89,22 @@ namespace OpticalInit {
 
       // 4) Load PMT QE and compute ⟨QE⟩ in 400–450 nm (for logging)
       PMTSummary ps = OpticalPropertiesLoader::LoadPMTQE(pmt_qe_csv, 400.0, 450.0);
+      gPMTSummary = ps;
+
+      if (!gPhotocathodeSurface) {
+        gPhotocathodeSurface = new G4OpticalSurface("PhotocathodeSurface",
+                                                    unified, polished, dielectric_metal);
+      }
+      if (!ps.energy.empty()) {
+        std::vector<G4double> reflectivity(ps.efficiency.size(), 0.0);
+        for (size_t i = 0; i < ps.efficiency.size(); ++i) {
+          reflectivity[i] = std::max(0.0, 1.0 - ps.efficiency[i]);
+        }
+        auto* cathodeMPT = new G4MaterialPropertiesTable();
+        cathodeMPT->AddProperty("EFFICIENCY",   ps.energy, ps.efficiency);
+        cathodeMPT->AddProperty("REFLECTIVITY", ps.energy, reflectivity);
+        gPhotocathodeSurface->SetMaterialPropertiesTable(cathodeMPT);
+      }
 
       // 5) Print compact DoD-style summaries
       cout << "[Optics] Water optics: λ=" << fmt_rng(ws.lambda_min_nm, ws.lambda_max_nm, 1, " nm")
@@ -96,4 +126,7 @@ namespace OpticalInit {
       return false;
     }
   }
+
+  const PMTSummary& GetPMTSummary() { return gPMTSummary; }
+  G4OpticalSurface* GetPhotocathodeSurface() { return gPhotocathodeSurface; }
 }

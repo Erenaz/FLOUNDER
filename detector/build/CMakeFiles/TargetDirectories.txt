@@ -1,5 +1,3 @@
-/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data/build/CMakeFiles/flndr_day1.dir
-/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data/build/CMakeFiles/flndr_day2.dir
-/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data/build/CMakeFiles/flndr_day3.dir
-/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data/build/CMakeFiles/edit_cache.dir
-/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data/build/CMakeFiles/rebuild_cache.dir
+/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/build/CMakeFiles/flndr.dir
+/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/build/CMakeFiles/edit_cache.dir
+/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/build/CMakeFiles/rebuild_cache.dir

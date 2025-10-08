@@ -1,7 +1,0 @@
-/control/verbose 0
-/tracking/verbose 0
-/vis/disable
-/run/initialize
-# (Rootracker opens your file in code; if you expose a UI cmd, call it here)
-# /rootracker/eventIndex 0   # optional if you need a specific entry
-/run/beamOn 10

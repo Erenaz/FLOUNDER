@@ -1,6 +1,6 @@
 CMakeFiles/flndr_day3.dir/src/PhotonCountActions.cc.o: \
-  /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data/src/PhotonCountActions.cc \
-  /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data/include/PhotonCountActions.hh \
+  /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/PhotonCountActions.cc \
+  /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/include/PhotonCountActions.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4UserEventAction.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4UserStackingAction.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4ClassificationOfNewTrack.hh \

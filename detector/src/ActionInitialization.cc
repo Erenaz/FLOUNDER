@@ -1,5 +1,6 @@
 #include "ActionInitialization.hh"
-#include "RootrackerPrimaryGenerator.hh"
+#include "PrimaryGeneratorAction.hh"
+#include "RunAction.hh"
 #include <G4VUserPrimaryGeneratorAction.hh>
 #include "PhotonCountActions.hh"
 #include "PhotonBudget.hh"
@@ -11,9 +12,11 @@ ActionInitialization::ActionInitialization(const G4String& rfile, double zshift)
 : fRootFile(rfile), fZshift(zshift) {}
 
  void ActionInitialization::Build() const {
-  // Primary generator
-  auto* gen = new RootrackerPrimaryGenerator(fRootFile, fZshift);
-  SetUserAction(gen);
+  // Primary generator (supports rootracker or particle gun)
+  SetUserAction(new PrimaryGeneratorAction(fRootFile, fZshift));
+
+  // Run-level accounting
+  SetUserAction(new RunAction());
 
   // --- Day-2: photon counting baseline
   auto* pcEvt = new PhotonCountEventAction();
@@ -43,4 +46,3 @@ ActionInitialization::ActionInitialization(const G4String& rfile, double zshift)
   SetUserAction(digiEvt);
   SetUserAction(new DigitizerSteppingAction(digiEvt, "PMT"));
 }
-

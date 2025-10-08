@@ -123,13 +123,16 @@ PMTSummary OpticalPropertiesLoader::LoadPMTQE(
   }
   if (rows.size() < 2) throw std::runtime_error("No/too few rows in PMT QE CSV: " + csv_path);
 
-  // Sort by wavelength increasing (nm)
+  // Sort by increasing wavelength (nm)
   std::sort(rows.begin(), rows.end(),
             [](const QErow& a, const QErow& b){ return a.lambda_nm < b.lambda_nm; });
 
   PMTSummary s; s.npoints = rows.size();
   s.lambda_min_nm = rows.front().lambda_nm;
   s.lambda_max_nm = rows.back().lambda_nm;
+
+  std::vector<G4double> ENERGY; ENERGY.reserve(rows.size());
+  std::vector<G4double> EFF;    EFF.reserve(rows.size());
 
   // --- Weighted mean over [mean_from_nm, mean_to_nm] using trapezoids with segment clipping ---
   const double A = std::max<double>(mean_from_nm, s.lambda_min_nm);
@@ -144,6 +147,13 @@ PMTSummary OpticalPropertiesLoader::LoadPMTQE(
     double t = (x - x0) / (x1 - x0);
     return y0 + t*(y1 - y0);
   };
+
+  const double hc = h_Planck * c_light;
+  for (auto it = rows.rbegin(); it != rows.rend(); ++it) {
+    const G4double E = hc / (it->lambda_nm * nm);
+    ENERGY.push_back(E);
+    EFF.push_back(it->qe);
+  }
 
   if (A < B) {
     for (size_t i = 0; i+1 < rows.size(); ++i) {
@@ -160,6 +170,7 @@ PMTSummary OpticalPropertiesLoader::LoadPMTQE(
     }
   }
   s.mean_qe_400_450 = (width > 0 ? area / width : 0.0);
+  s.energy     = ENERGY;
+  s.efficiency = EFF;
   return s;
 }
-

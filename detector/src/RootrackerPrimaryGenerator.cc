@@ -125,8 +125,27 @@ void RootrackerPrimaryGenerator::GeneratePrimaries(G4Event* event) {
   const double vz = EvtVtx[2]*1000.0 + fZShiftMM;  // shift maps CAN→GDML
   const double tn = EvtVtx[3]*1.0e9;
 
+  const G4double pxMeV = px*MeV;
+  const G4double pyMeV = py*MeV;
+  const G4double pzMeV = pz*MeV;
+  const G4double eMeV = E*MeV;
+  const G4double vxPos = vx*mm;
+  const G4double vyPos = vy*mm;
+  const G4double vzPos = vz*mm;
+  const G4double vt = tn*ns;
+
+  if (fNextIndex == 0) {
+    const G4ThreeVector pVec(pxMeV, pyMeV, pzMeV);
+    const G4double pMag = pVec.mag();
+    G4cout << "[EVT0] vtx(mm)=(" << vxPos/mm << "," << vyPos/mm << "," << vzPos/mm
+           << ") t(ns)=" << vt/ns
+           << " p(MeV)=(" << pxMeV/MeV << "," << pyMeV/MeV << "," << pzMeV/MeV << ")"
+           << " |p|=" << pMag/MeV
+           << G4endl;
+  }
+
   // G4 primary
-  auto* vtx = new G4PrimaryVertex(G4ThreeVector(vx*mm, vy*mm, vz*mm), tn*ns);
+  auto* vtx = new G4PrimaryVertex(G4ThreeVector(vxPos, vyPos, vzPos), vt);
   const G4ThreeVector x0(vtx->GetX0(), vtx->GetY0(), vtx->GetZ0());
   const double t0_ns = vtx->GetT0() / ns;   // convert Geant4 internal time to [ns] scalar
   PrimaryInfo::Set(x0, t0_ns);
@@ -139,8 +158,8 @@ void RootrackerPrimaryGenerator::GeneratePrimaries(G4Event* event) {
     G4Exception("RootrackerPrimaryGenerator","UnknownPDG",JustWarning,"PDG not in table; forcing mu-");
     pdef = ptable->FindParticle(13);
   }
-  auto* prim = new G4PrimaryParticle(pdef, px*MeV, py*MeV, pz*MeV);
-  prim->SetTotalEnergy(E*MeV);
+  auto* prim = new G4PrimaryParticle(pdef, pxMeV, pyMeV, pzMeV);
+  prim->SetTotalEnergy(eMeV);
 
   vtx->SetPrimary(prim);
   event->AddPrimaryVertex(vtx);

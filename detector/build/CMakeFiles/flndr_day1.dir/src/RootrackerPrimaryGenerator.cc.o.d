@@ -1,6 +1,6 @@
 CMakeFiles/flndr_day1.dir/src/RootrackerPrimaryGenerator.cc.o: \
-  /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data/src/RootrackerPrimaryGenerator.cc \
-  /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data/include/RootrackerPrimaryGenerator.hh \
+  /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/RootrackerPrimaryGenerator.cc \
+  /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/include/RootrackerPrimaryGenerator.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4VUserPrimaryGeneratorAction.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4ThreeVector.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/globals.hh \
@@ -863,26 +863,10 @@ CMakeFiles/flndr_day1.dir/src/RootrackerPrimaryGenerator.cc.o: \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4SystemOfUnits.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4UnitsTable.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4UnitsTable.icc \
-  /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/Simulations/GEANT4data/include/PhotonBudget.hh \
+  /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/include/PhotonBudget.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4UserEventAction.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4UserSteppingAction.hh \
-  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4RunManager.hh \
-  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4EventManager.hh \
-  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4StackManager.hh \
-  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4UserStackingAction.hh \
-  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4ClassificationOfNewTrack.hh \
-  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4StackedTrack.hh \
-  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4TrackStack.hh \
-  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4SmartTrackStack.hh \
-  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4SubEventTrackStack.hh \
-  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4SubEvent.hh \
-  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4Track.hh \
-  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/trkdefs.hh \
-  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4LogicalVolume.hh \
-  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4Region.hh \
-  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4GeomSplitter.hh \
-  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/geomwdefs.hh \
-  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4Region.icc \
+  /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/include/Digitizer.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4VPhysicalVolume.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/geomdefs.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4RotationMatrix.hh \
@@ -900,7 +884,24 @@ CMakeFiles/flndr_day1.dir/src/RootrackerPrimaryGenerator.cc.o: \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/CLHEP/Vector/RotationZ.h \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/CLHEP/Vector/RotationZ.icc \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/CLHEP/Vector/Rotation.icc \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4GeomSplitter.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/geomwdefs.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4VPhysicalVolume.icc \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4RunManager.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4EventManager.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4StackManager.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4UserStackingAction.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4ClassificationOfNewTrack.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4StackedTrack.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4TrackStack.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4SmartTrackStack.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4SubEventTrackStack.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4SubEvent.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4Track.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/trkdefs.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4LogicalVolume.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4Region.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4Region.icc \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4LogicalVolume.icc \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4DynamicParticle.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4ElectronOccupancy.hh \

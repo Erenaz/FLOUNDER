@@ -3,6 +3,9 @@
 
 class G4VPhysicalVolume;
 
+struct PMTSummary;
+class G4OpticalSurface;
+
 namespace OpticalInit {
   // Attach water/ vacuum properties and make a border surface (water ↔ world).
   // Returns true on success and prints a one-line DoD-style summary to stdout.
@@ -10,4 +13,7 @@ namespace OpticalInit {
                        const std::string& pmt_qe_csv,
                        G4VPhysicalVolume* worldPV,
                        G4VPhysicalVolume* canPV);
+
+  const PMTSummary& GetPMTSummary();
+  G4OpticalSurface* GetPhotocathodeSurface();
 }
