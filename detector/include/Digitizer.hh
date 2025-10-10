@@ -75,6 +75,7 @@ public:
   // interface used by the stepping action:
   int  IdForPMT(const G4VPhysicalVolume* pv);
   void PushPhotonAtPMT(const G4ThreeVector& x, double t_ns);
+  void IncrementCerenkovSecondary();
 
 private:
   // config
@@ -93,7 +94,10 @@ private:
   // helpers
   void addDarkNoise();
   double gauss(double sigma_ns);
+  void dumpHitCollections(const G4Event* event) const;
   friend class DigitizerSteppingAction;
+
+  int cerenkovSecondaries_{0};
 };
   
 class DigitizerSteppingAction : public G4UserSteppingAction {

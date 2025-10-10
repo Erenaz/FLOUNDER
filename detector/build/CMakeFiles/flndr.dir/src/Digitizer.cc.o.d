@@ -853,6 +853,7 @@ CMakeFiles/flndr.dir/src/Digitizer.cc.o: \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/__thread/this_thread.h \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4VPhysicalVolume.icc \
   /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/include/PhotonBudget.hh \
+  /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/include/RunManifest.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4RunManager.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4Event.hh \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/set \
@@ -1076,6 +1077,17 @@ CMakeFiles/flndr.dir/src/Digitizer.cc.o: \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/list \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4SystemOfUnits.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4OpticalPhoton.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4OpBoundaryProcess.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4OpticalSurface.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4Physics2DVector.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4Physics2DVector.icc \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4SurfaceProperty.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4RandomTools.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4RandomDirection.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4TwoVector.hh \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/CLHEP/Vector/TwoVector.h \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/CLHEP/Vector/TwoVector.icc \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4VDiscreteProcess.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4PhysicalConstants.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4Poisson.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4Exp.hh \

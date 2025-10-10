@@ -170,10 +170,24 @@ CMakeFiles/flndr.dir/src/OpticalPropertiesLoader.cc.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/flndr.dir/src/OpticalPropertiesLoader.cc.s"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/OpticalPropertiesLoader.cc -o CMakeFiles/flndr.dir/src/OpticalPropertiesLoader.cc.s
 
+CMakeFiles/flndr.dir/src/OpticalProperties.cc.o: CMakeFiles/flndr.dir/flags.make
+CMakeFiles/flndr.dir/src/OpticalProperties.cc.o: /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/OpticalProperties.cc
+CMakeFiles/flndr.dir/src/OpticalProperties.cc.o: CMakeFiles/flndr.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/flndr.dir/src/OpticalProperties.cc.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/flndr.dir/src/OpticalProperties.cc.o -MF CMakeFiles/flndr.dir/src/OpticalProperties.cc.o.d -o CMakeFiles/flndr.dir/src/OpticalProperties.cc.o -c /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/OpticalProperties.cc
+
+CMakeFiles/flndr.dir/src/OpticalProperties.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/flndr.dir/src/OpticalProperties.cc.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/OpticalProperties.cc > CMakeFiles/flndr.dir/src/OpticalProperties.cc.i
+
+CMakeFiles/flndr.dir/src/OpticalProperties.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/flndr.dir/src/OpticalProperties.cc.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/OpticalProperties.cc -o CMakeFiles/flndr.dir/src/OpticalProperties.cc.s
+
 CMakeFiles/flndr.dir/src/OpticalInit.cc.o: CMakeFiles/flndr.dir/flags.make
 CMakeFiles/flndr.dir/src/OpticalInit.cc.o: /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/OpticalInit.cc
 CMakeFiles/flndr.dir/src/OpticalInit.cc.o: CMakeFiles/flndr.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/flndr.dir/src/OpticalInit.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/flndr.dir/src/OpticalInit.cc.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/flndr.dir/src/OpticalInit.cc.o -MF CMakeFiles/flndr.dir/src/OpticalInit.cc.o.d -o CMakeFiles/flndr.dir/src/OpticalInit.cc.o -c /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/OpticalInit.cc
 
 CMakeFiles/flndr.dir/src/OpticalInit.cc.i: cmake_force
@@ -184,10 +198,66 @@ CMakeFiles/flndr.dir/src/OpticalInit.cc.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/flndr.dir/src/OpticalInit.cc.s"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/OpticalInit.cc -o CMakeFiles/flndr.dir/src/OpticalInit.cc.s
 
+CMakeFiles/flndr.dir/src/PhysicsList.cc.o: CMakeFiles/flndr.dir/flags.make
+CMakeFiles/flndr.dir/src/PhysicsList.cc.o: /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/PhysicsList.cc
+CMakeFiles/flndr.dir/src/PhysicsList.cc.o: CMakeFiles/flndr.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/flndr.dir/src/PhysicsList.cc.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/flndr.dir/src/PhysicsList.cc.o -MF CMakeFiles/flndr.dir/src/PhysicsList.cc.o.d -o CMakeFiles/flndr.dir/src/PhysicsList.cc.o -c /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/PhysicsList.cc
+
+CMakeFiles/flndr.dir/src/PhysicsList.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/flndr.dir/src/PhysicsList.cc.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/PhysicsList.cc > CMakeFiles/flndr.dir/src/PhysicsList.cc.i
+
+CMakeFiles/flndr.dir/src/PhysicsList.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/flndr.dir/src/PhysicsList.cc.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/PhysicsList.cc -o CMakeFiles/flndr.dir/src/PhysicsList.cc.s
+
+CMakeFiles/flndr.dir/src/PMTHit.cc.o: CMakeFiles/flndr.dir/flags.make
+CMakeFiles/flndr.dir/src/PMTHit.cc.o: /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/PMTHit.cc
+CMakeFiles/flndr.dir/src/PMTHit.cc.o: CMakeFiles/flndr.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/flndr.dir/src/PMTHit.cc.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/flndr.dir/src/PMTHit.cc.o -MF CMakeFiles/flndr.dir/src/PMTHit.cc.o.d -o CMakeFiles/flndr.dir/src/PMTHit.cc.o -c /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/PMTHit.cc
+
+CMakeFiles/flndr.dir/src/PMTHit.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/flndr.dir/src/PMTHit.cc.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/PMTHit.cc > CMakeFiles/flndr.dir/src/PMTHit.cc.i
+
+CMakeFiles/flndr.dir/src/PMTHit.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/flndr.dir/src/PMTHit.cc.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/PMTHit.cc -o CMakeFiles/flndr.dir/src/PMTHit.cc.s
+
+CMakeFiles/flndr.dir/src/RunManifest.cc.o: CMakeFiles/flndr.dir/flags.make
+CMakeFiles/flndr.dir/src/RunManifest.cc.o: /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/RunManifest.cc
+CMakeFiles/flndr.dir/src/RunManifest.cc.o: CMakeFiles/flndr.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/flndr.dir/src/RunManifest.cc.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/flndr.dir/src/RunManifest.cc.o -MF CMakeFiles/flndr.dir/src/RunManifest.cc.o.d -o CMakeFiles/flndr.dir/src/RunManifest.cc.o -c /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/RunManifest.cc
+
+CMakeFiles/flndr.dir/src/RunManifest.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/flndr.dir/src/RunManifest.cc.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/RunManifest.cc > CMakeFiles/flndr.dir/src/RunManifest.cc.i
+
+CMakeFiles/flndr.dir/src/RunManifest.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/flndr.dir/src/RunManifest.cc.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/RunManifest.cc -o CMakeFiles/flndr.dir/src/RunManifest.cc.s
+
+CMakeFiles/flndr.dir/src/PMTDigitizer.cc.o: CMakeFiles/flndr.dir/flags.make
+CMakeFiles/flndr.dir/src/PMTDigitizer.cc.o: /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/PMTDigitizer.cc
+CMakeFiles/flndr.dir/src/PMTDigitizer.cc.o: CMakeFiles/flndr.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/flndr.dir/src/PMTDigitizer.cc.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/flndr.dir/src/PMTDigitizer.cc.o -MF CMakeFiles/flndr.dir/src/PMTDigitizer.cc.o.d -o CMakeFiles/flndr.dir/src/PMTDigitizer.cc.o -c /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/PMTDigitizer.cc
+
+CMakeFiles/flndr.dir/src/PMTDigitizer.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/flndr.dir/src/PMTDigitizer.cc.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/PMTDigitizer.cc > CMakeFiles/flndr.dir/src/PMTDigitizer.cc.i
+
+CMakeFiles/flndr.dir/src/PMTDigitizer.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/flndr.dir/src/PMTDigitizer.cc.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/PMTDigitizer.cc -o CMakeFiles/flndr.dir/src/PMTDigitizer.cc.s
+
 CMakeFiles/flndr.dir/src/PhotonBudget.cc.o: CMakeFiles/flndr.dir/flags.make
 CMakeFiles/flndr.dir/src/PhotonBudget.cc.o: /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/PhotonBudget.cc
 CMakeFiles/flndr.dir/src/PhotonBudget.cc.o: CMakeFiles/flndr.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/flndr.dir/src/PhotonBudget.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/flndr.dir/src/PhotonBudget.cc.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/flndr.dir/src/PhotonBudget.cc.o -MF CMakeFiles/flndr.dir/src/PhotonBudget.cc.o.d -o CMakeFiles/flndr.dir/src/PhotonBudget.cc.o -c /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/PhotonBudget.cc
 
 CMakeFiles/flndr.dir/src/PhotonBudget.cc.i: cmake_force
@@ -201,7 +271,7 @@ CMakeFiles/flndr.dir/src/PhotonBudget.cc.s: cmake_force
 CMakeFiles/flndr.dir/src/Digitizer.cc.o: CMakeFiles/flndr.dir/flags.make
 CMakeFiles/flndr.dir/src/Digitizer.cc.o: /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/Digitizer.cc
 CMakeFiles/flndr.dir/src/Digitizer.cc.o: CMakeFiles/flndr.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/flndr.dir/src/Digitizer.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/flndr.dir/src/Digitizer.cc.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/flndr.dir/src/Digitizer.cc.o -MF CMakeFiles/flndr.dir/src/Digitizer.cc.o.d -o CMakeFiles/flndr.dir/src/Digitizer.cc.o -c /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/Digitizer.cc
 
 CMakeFiles/flndr.dir/src/Digitizer.cc.i: cmake_force
@@ -215,7 +285,7 @@ CMakeFiles/flndr.dir/src/Digitizer.cc.s: cmake_force
 CMakeFiles/flndr.dir/src/IO.cc.o: CMakeFiles/flndr.dir/flags.make
 CMakeFiles/flndr.dir/src/IO.cc.o: /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/IO.cc
 CMakeFiles/flndr.dir/src/IO.cc.o: CMakeFiles/flndr.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/flndr.dir/src/IO.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/flndr.dir/src/IO.cc.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/flndr.dir/src/IO.cc.o -MF CMakeFiles/flndr.dir/src/IO.cc.o.d -o CMakeFiles/flndr.dir/src/IO.cc.o -c /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/IO.cc
 
 CMakeFiles/flndr.dir/src/IO.cc.i: cmake_force
@@ -229,7 +299,7 @@ CMakeFiles/flndr.dir/src/IO.cc.s: cmake_force
 CMakeFiles/flndr.dir/src/PMTSD.cc.o: CMakeFiles/flndr.dir/flags.make
 CMakeFiles/flndr.dir/src/PMTSD.cc.o: /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/PMTSD.cc
 CMakeFiles/flndr.dir/src/PMTSD.cc.o: CMakeFiles/flndr.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/flndr.dir/src/PMTSD.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/flndr.dir/src/PMTSD.cc.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/flndr.dir/src/PMTSD.cc.o -MF CMakeFiles/flndr.dir/src/PMTSD.cc.o.d -o CMakeFiles/flndr.dir/src/PMTSD.cc.o -c /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/PMTSD.cc
 
 CMakeFiles/flndr.dir/src/PMTSD.cc.i: cmake_force
@@ -243,7 +313,7 @@ CMakeFiles/flndr.dir/src/PMTSD.cc.s: cmake_force
 CMakeFiles/flndr.dir/src/RunAction.cc.o: CMakeFiles/flndr.dir/flags.make
 CMakeFiles/flndr.dir/src/RunAction.cc.o: /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/RunAction.cc
 CMakeFiles/flndr.dir/src/RunAction.cc.o: CMakeFiles/flndr.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/flndr.dir/src/RunAction.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/flndr.dir/src/RunAction.cc.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/flndr.dir/src/RunAction.cc.o -MF CMakeFiles/flndr.dir/src/RunAction.cc.o.d -o CMakeFiles/flndr.dir/src/RunAction.cc.o -c /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/RunAction.cc
 
 CMakeFiles/flndr.dir/src/RunAction.cc.i: cmake_force
@@ -263,7 +333,12 @@ flndr_OBJECTS = \
 "CMakeFiles/flndr.dir/src/RootrackerPrimaryGenerator.cc.o" \
 "CMakeFiles/flndr.dir/src/PhotonCountActions.cc.o" \
 "CMakeFiles/flndr.dir/src/OpticalPropertiesLoader.cc.o" \
+"CMakeFiles/flndr.dir/src/OpticalProperties.cc.o" \
 "CMakeFiles/flndr.dir/src/OpticalInit.cc.o" \
+"CMakeFiles/flndr.dir/src/PhysicsList.cc.o" \
+"CMakeFiles/flndr.dir/src/PMTHit.cc.o" \
+"CMakeFiles/flndr.dir/src/RunManifest.cc.o" \
+"CMakeFiles/flndr.dir/src/PMTDigitizer.cc.o" \
 "CMakeFiles/flndr.dir/src/PhotonBudget.cc.o" \
 "CMakeFiles/flndr.dir/src/Digitizer.cc.o" \
 "CMakeFiles/flndr.dir/src/IO.cc.o" \
@@ -280,7 +355,12 @@ flndr: CMakeFiles/flndr.dir/src/PrimaryGeneratorAction.cc.o
 flndr: CMakeFiles/flndr.dir/src/RootrackerPrimaryGenerator.cc.o
 flndr: CMakeFiles/flndr.dir/src/PhotonCountActions.cc.o
 flndr: CMakeFiles/flndr.dir/src/OpticalPropertiesLoader.cc.o
+flndr: CMakeFiles/flndr.dir/src/OpticalProperties.cc.o
 flndr: CMakeFiles/flndr.dir/src/OpticalInit.cc.o
+flndr: CMakeFiles/flndr.dir/src/PhysicsList.cc.o
+flndr: CMakeFiles/flndr.dir/src/PMTHit.cc.o
+flndr: CMakeFiles/flndr.dir/src/RunManifest.cc.o
+flndr: CMakeFiles/flndr.dir/src/PMTDigitizer.cc.o
 flndr: CMakeFiles/flndr.dir/src/PhotonBudget.cc.o
 flndr: CMakeFiles/flndr.dir/src/Digitizer.cc.o
 flndr: CMakeFiles/flndr.dir/src/IO.cc.o
@@ -318,7 +398,7 @@ flndr: /usr/local/Cellar/root/6.36.04/lib/root/libTree.so
 flndr: /usr/local/opt/qt@5/lib/QtOpenGL.framework/QtOpenGL
 flndr: /usr/local/opt/qt@5/lib/Qt3DExtras.framework/Qt3DExtras
 flndr: /usr/local/opt/qt@5/lib/Qt3DRender.framework/Qt3DRender
-flndr: /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/lib/libz.tbd
+flndr: _deps/yaml-cpp-build/libyaml-cpp.a
 flndr: /usr/local/opt/qt@5/lib/QtWidgets.framework/QtWidgets
 flndr: /usr/local/lib/libxerces-c.dylib
 flndr: /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/lib/libG4analysis.dylib
@@ -343,7 +423,7 @@ flndr: /usr/local/opt/qt@5/lib/QtGui.framework/QtGui
 flndr: /usr/local/opt/qt@5/lib/QtNetwork.framework/QtNetwork
 flndr: /usr/local/opt/qt@5/lib/QtCore.framework/QtCore
 flndr: CMakeFiles/flndr.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Linking CXX executable flndr"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Linking CXX executable flndr"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/flndr.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

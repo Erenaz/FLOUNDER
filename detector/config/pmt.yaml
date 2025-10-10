@@ -1,0 +1,17 @@
+# PMT response model for Week-2
+wavelength_nm: [300,320,340,360,380,400,420,440,460,480,500,520,540,560,580,600]
+
+# Peak QE ~28% around 400 nm; modest falloff to red/UV
+QE_curve: [0.05,0.08,0.12,0.18,0.24,0.28,0.27,0.25,0.23,0.20,0.17,0.13,0.10,0.07,0.05,0.03]
+QE_scale: 1.0  # multiplicative factor for quick scans
+
+# Timing
+TTS_sigma_ps: 250        # transit-time spread (1σ)
+elec_jitter_ps: 100      # electronics jitter (1σ)
+
+# Dark noise & gate
+dark_rate_Hz: 3200
+gate_ns: 600
+
+# Per-PMT threshold
+threshold_npe: 0.35

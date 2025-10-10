@@ -1,7 +1,6 @@
 CMakeFiles/flndr.dir/src/ActionInitialization.cc.o: \
   /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/src/ActionInitialization.cc \
   /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/include/ActionInitialization.hh \
-  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4VUserActionInitialization.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4String.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4Types.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4GlobalConfig.hh \
@@ -800,6 +799,7 @@ CMakeFiles/flndr.dir/src/ActionInitialization.cc.o: \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/tls.hh \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/iostream \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4String.icc \
+  /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4VUserActionInitialization.hh \
   /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/include/PrimaryGeneratorAction.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4VUserPrimaryGeneratorAction.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4ThreeVector.hh \
@@ -931,4 +931,5 @@ CMakeFiles/flndr.dir/src/ActionInitialization.cc.o: \
   /usr/local/Cellar/root/6.36.04/include/root/TBranch.h \
   /usr/local/Cellar/root/6.36.04/include/root/TBranchCacheInfo.h \
   /usr/local/Cellar/root/6.36.04/include/root/TBits.h \
+  /Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/include/PMTDigitizer.hh \
   /Users/jingyuanzhang/Desktop/CodeRepository/GEANT4/geant4-v11.3.1-install/include/Geant4/G4OpticalParameters.hh

@@ -1,11 +1,18 @@
 #include "Digitizer.hh"
 #include "PhotonBudget.hh"          // for PrimaryInfo::T0ns() and X0()
+#include "RunManifest.hh"
 #include "G4RunManager.hh"
 #include "G4Step.hh"
+#include "G4HCofThisEvent.hh"
+#include "G4VHitsCollection.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4OpticalPhoton.hh"
+#include "G4OpBoundaryProcess.hh"
 #include "G4PhysicalConstants.hh"
+#include "G4ProcessManager.hh"
 #include "G4Poisson.hh"
+#include "G4Track.hh"
+#include "G4VProcess.hh"
 #include "Randomize.hh"
 
 #include "TFile.h"
@@ -17,6 +24,73 @@
 #include <algorithm>
 #include <filesystem>
 #include <unordered_set>
+
+namespace {
+
+const char* BoundaryStatusName(G4OpBoundaryProcessStatus status) {
+  switch (status) {
+    case Undefined: return "Undefined";
+    case Transmission: return "Transmission";
+    case FresnelRefraction: return "FresnelRefraction";
+    case FresnelReflection: return "FresnelReflection";
+    case TotalInternalReflection: return "TotalInternalReflection";
+    case LambertianReflection: return "LambertianReflection";
+    case LobeReflection: return "LobeReflection";
+    case SpikeReflection: return "SpikeReflection";
+    case BackScattering: return "BackScattering";
+    case Absorption: return "Absorption";
+    case Detection: return "Detection";
+    case NotAtBoundary: return "NotAtBoundary";
+    case SameMaterial: return "SameMaterial";
+    case StepTooSmall: return "StepTooSmall";
+    case NoRINDEX: return "NoRINDEX";
+    case PolishedLumirrorAirReflection: return "PolishedLumirrorAirReflection";
+    case PolishedLumirrorGlueReflection: return "PolishedLumirrorGlueReflection";
+    case PolishedAirReflection: return "PolishedAirReflection";
+    case PolishedTeflonAirReflection: return "PolishedTeflonAirReflection";
+    case PolishedTiOAirReflection: return "PolishedTiOAirReflection";
+    case PolishedTyvekAirReflection: return "PolishedTyvekAirReflection";
+    case PolishedVM2000AirReflection: return "PolishedVM2000AirReflection";
+    case PolishedVM2000GlueReflection: return "PolishedVM2000GlueReflection";
+    case EtchedLumirrorAirReflection: return "EtchedLumirrorAirReflection";
+    case EtchedLumirrorGlueReflection: return "EtchedLumirrorGlueReflection";
+    case EtchedAirReflection: return "EtchedAirReflection";
+    case EtchedTeflonAirReflection: return "EtchedTeflonAirReflection";
+    case EtchedTiOAirReflection: return "EtchedTiOAirReflection";
+    case EtchedTyvekAirReflection: return "EtchedTyvekAirReflection";
+    case EtchedVM2000AirReflection: return "EtchedVM2000AirReflection";
+    case EtchedVM2000GlueReflection: return "EtchedVM2000GlueReflection";
+    case GroundLumirrorAirReflection: return "GroundLumirrorAirReflection";
+    case GroundLumirrorGlueReflection: return "GroundLumirrorGlueReflection";
+    case GroundAirReflection: return "GroundAirReflection";
+    case GroundTeflonAirReflection: return "GroundTeflonAirReflection";
+    case GroundTiOAirReflection: return "GroundTiOAirReflection";
+    case GroundTyvekAirReflection: return "GroundTyvekAirReflection";
+    case GroundVM2000AirReflection: return "GroundVM2000AirReflection";
+    case GroundVM2000GlueReflection: return "GroundVM2000GlueReflection";
+    case Dichroic: return "Dichroic";
+    default: return "Unknown";
+  }
+}
+
+G4OpBoundaryProcess* FindBoundaryProcess(const G4Track* track) {
+  static thread_local G4OpBoundaryProcess* cached = nullptr;
+  if (cached) return cached;
+  if (!track) return nullptr;
+  auto* procMgr = track->GetDefinition()->GetProcessManager();
+  if (!procMgr) return nullptr;
+  auto* procList = procMgr->GetProcessList();
+  for (G4int i = 0; i < procMgr->GetProcessListLength(); ++i) {
+    auto* proc = (*procList)[i];
+    if (auto* boundary = dynamic_cast<G4OpBoundaryProcess*>(proc)) {
+      cached = boundary;
+      break;
+    }
+  }
+  return cached;
+}
+
+} // namespace
 
 // ---------------- HitWriter (ROOT) ----------------
 struct HitWriter::Impl {
@@ -38,6 +112,7 @@ HitWriter::HitWriter(const std::string& outroot) : p_(new Impl) {
   p_->t->Branch("npe",&p_->b_npe);
   p_->t->SetDirectory(p_->f);
   p_->f->SetCompressionSettings(209); // algo 2 (lz4), level 9: good size/speed
+  RegisterOutputFile(p_->f);
 }
 HitWriter::~HitWriter(){
   if (p_ && p_->f) {
@@ -150,11 +225,19 @@ void DigitizerEventAction::BeginOfEventAction(const G4Event*){
     writer_ = std::make_unique<HitWriter>(out_path_);
     writer_->writeRunMeta("<set_with_sha1sum_gdml>", "wallModel=…; rho=…; water=…");
   }
+
+  if (GetRunManifest().opticalDebug && evtid_ == 0) {
+    G4cout << "[OPT_DBG] Event 0: optical boundary tracing enabled (limited output)" << G4endl;
+  }
+  cerenkovSecondaries_ = 0;
 }
 
-void DigitizerEventAction::EndOfEventAction(const G4Event*){
+void DigitizerEventAction::EndOfEventAction(const G4Event* event){
+  dumpHitCollections(event);
   // Add dark noise after photon processing
   addDarkNoise();
+  G4cout << "[OPT_DBG] event=" << evtid_
+         << " n_cerenkov_secondaries=" << cerenkovSecondaries_ << G4endl;
   // write and clear
   writer_->writeEvent(hits_ev_);
   hits_ev_.clear();
@@ -207,10 +290,36 @@ void DigitizerEventAction::addDarkNoise(){
   }
 }
 
+void DigitizerEventAction::dumpHitCollections(const G4Event* event) const {
+  if (!event) {
+    G4cout << "[HCE] (no event)" << G4endl;
+    return;
+  }
+  auto* hce = event->GetHCofThisEvent();
+  if (!hce) {
+    G4cout << "[HCE] (null)" << G4endl;
+    return;
+  }
+  const G4int n = hce->GetNumberOfCollections();
+  for (G4int i = 0; i < n; ++i) {
+    auto* hc = hce->GetHC(i);
+    const G4String name = hc ? hc->GetName() : "(null)";
+    const G4int size = hc ? hc->GetSize() : 0;
+    G4cout << "[HCE] idx=" << i << " name=" << name << " size=" << size << G4endl;
+  }
+}
+
 // ---------------- Stepping: hook PMT crossings ----------------
 void DigitizerSteppingAction::UserSteppingAction(const G4Step* step){
   auto* trk = step->GetTrack();
   if (trk->GetDefinition() != G4OpticalPhoton::Definition()) return;
+
+  if (trk->GetCurrentStepNumber() == 1) {
+    auto* creator = trk->GetCreatorProcess();
+    if (creator && creator->GetProcessName() == "Cerenkov") {
+      evt_->IncrementCerenkovSecondary();
+    }
+  }
 
   auto* prePV  = step->GetPreStepPoint()->GetPhysicalVolume();
   auto* postPV = step->GetPostStepPoint()->GetPhysicalVolume();
@@ -219,6 +328,23 @@ void DigitizerSteppingAction::UserSteppingAction(const G4Step* step){
 
   const auto& name = postPV->GetName();
   if (name.find(patt_) == std::string::npos) return;
+
+  if (GetRunManifest().opticalDebug) {
+    static const int kMaxReports = 100;
+    static int reported = 0;
+    if (reported < kMaxReports) {
+      auto* boundary = FindBoundaryProcess(trk);
+      const char* statusName = boundary ? BoundaryStatusName(boundary->GetStatus()) : "n/a";
+      G4cout << "[OPT_DBG] evt=" << G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID()
+             << " pre=" << prePV->GetName()
+             << " post=" << postPV->GetName()
+             << " status=" << statusName
+             << " t_ns=" << trk->GetGlobalTime() / ns << G4endl;
+      if (++reported == kMaxReports) {
+        G4cout << "[OPT_DBG] ... further boundary logs suppressed ..." << G4endl;
+      }
+    }
+  }
 
   // time & position at PMT boundary
   double t_ns = trk->GetGlobalTime()/ns;
@@ -235,4 +361,8 @@ void DigitizerSteppingAction::UserSteppingAction(const G4Step* step){
                                 pid, t_digi, 1.0});
     }
   }
+}
+
+void DigitizerEventAction::IncrementCerenkovSecondary() {
+  ++cerenkovSecondaries_;
 }

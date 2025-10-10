@@ -1,7 +1,8 @@
 {
 	"InstallScripts" : 
 	[
-		"/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/build/cmake_install.cmake"
+		"/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/build/cmake_install.cmake",
+		"/Users/jingyuanzhang/Desktop/AstroParticle/FLOUNDER/detector/build/_deps/yaml-cpp-build/cmake_install.cmake"
 	],
 	"Parallel" : false
 }

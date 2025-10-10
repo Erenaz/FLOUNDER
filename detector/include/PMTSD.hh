@@ -12,7 +12,12 @@ public:
   void EndOfEvent(G4HCofThisEvent* hce) override;
 
 private:
+  void LogAttachmentsOnce();
+
   PMTHitsCollection* hits_{nullptr};
   G4int hc_id_{-1};
   G4int totalHits_{0};
+  G4int hitsThisEvent_{0};
+  G4int currentEventId_{-1};
+  bool attachmentsLogged_{false};
 };

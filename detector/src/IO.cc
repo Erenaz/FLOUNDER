@@ -1,5 +1,6 @@
 // src/IO.cc
 #include "IO.hh"
+#include "RunManifest.hh"
 #include <TNamed.h>
 
 IORunAction::IORunAction(const std::string& path, const DigitizerParams& P)
@@ -27,6 +28,8 @@ void IORunAction::BeginOfRunAction(const G4Run*) {
   // minimal metadata; you can extend this to include geometry/optics hashes
   new TNamed("geometry_hash","<fill me in>");
   new TNamed("optics_config","<fill me in>");
+
+  RegisterOutputFile(f);
 }
 
 void IORunAction::EndOfRunAction(const G4Run*) {

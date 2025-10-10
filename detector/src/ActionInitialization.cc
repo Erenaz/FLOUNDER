@@ -5,11 +5,16 @@
 #include "PhotonCountActions.hh"
 #include "PhotonBudget.hh"
 #include "IO.hh"
-#include "Digitizer.hh"
+#include "PMTDigitizer.hh"
 #include "G4OpticalParameters.hh"   // for FAST_MODE toggle (optional)
 
-ActionInitialization::ActionInitialization(const G4String& rfile, double zshift)
-: fRootFile(rfile), fZshift(zshift) {}
+#include <cstdlib>
+#include <utility>
+
+ActionInitialization::ActionInitialization(const G4String& rfile,
+                                           double zshift,
+                                           RunProfileConfig profile)
+: fRootFile(rfile), fZshift(zshift), fProfile(std::move(profile)) {}
 
  void ActionInitialization::Build() const {
   // Primary generator (supports rootracker or particle gun)
@@ -38,11 +43,13 @@ ActionInitialization::ActionInitialization(const G4String& rfile, double zshift)
   SetUserAction(budgetEvt);
   SetUserAction(new PhotonBudgetSteppingAction(budgetEvt, "PMT"));
 
-  // --- Day-4: digitizer (QE thinning → PEs; TTS + jitter; dark; threshold)
-  auto* digiEvt = new DigitizerEventAction();
-  digiEvt->ConfigureFromEnv();               // reads DIGI_* env vars if set
-  digiEvt->SetOutPath("docs/day4/hits.root");
-  digiEvt->SetPMTMatch("PMT");               // adjust if GDML uses a different substring
-  SetUserAction(digiEvt);
-  SetUserAction(new DigitizerSteppingAction(digiEvt, "PMT"));
+  if (fProfile.enableDigitizer) {
+    std::string digiCfg = fProfile.pmtConfigPath.empty()
+                            ? "detector/config/pmt.yaml"
+                            : fProfile.pmtConfigPath;
+    std::string digiOut = fProfile.pmtOutputPath.empty()
+                            ? "docs/day4/pmt_digi.root"
+                            : fProfile.pmtOutputPath;
+    SetUserAction(new PMTDigitizer(digiCfg, digiOut));
+  }
 }

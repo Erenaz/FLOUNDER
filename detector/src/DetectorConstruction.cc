@@ -1,9 +1,11 @@
 #include "DetectorConstruction.hh"
-#include "OpticalInit.hh"
+#include "globals.hh"
+#include "OpticalProperties.hh"
 
 #include <G4Box.hh>
 #include <G4Colour.hh>
 #include <G4GDMLParser.hh>
+#include <G4GeometryManager.hh>
 #include <G4LogicalBorderSurface.hh>
 #include <G4LogicalVolume.hh>
 #include <G4MaterialPropertiesTable.hh>
@@ -26,7 +28,11 @@
 #include <cctype>
 
 #include <cstdlib>   // getenv
+#include <iomanip>
+#include <sstream>
 #include <string>
+#include <utility>
+#include <vector>
 
 // Remap any GDML "Vacuum" materials to NIST G4_Galactic (cosmetic; keeps logs clean)
 static int RemapGDMLVacuumToGalactic() {
@@ -52,8 +58,56 @@ static int RemapGDMLVacuumToGalactic() {
   return n;
 }
 
-DetectorConstruction::DetectorConstruction(const G4String& gdmlPath)
-  : fGdmlPath(gdmlPath) {}
+static std::string fmt_range(double a, double b, int precision, const char* unit = "") {
+  std::ostringstream os;
+  os.setf(std::ios::fixed);
+  os << std::setprecision(precision) << "[" << a << "," << b << "]" << unit;
+  return os.str();
+}
+
+static const char* SurfaceTypeName(G4SurfaceType type) {
+  switch (type) {
+    case dielectric_metal: return "dielectric_metal";
+    case dielectric_dielectric: return "dielectric_dielectric";
+    case dielectric_LUT: return "dielectric_LUT";
+    case dielectric_LUTDAVIS: return "dielectric_LUTDAVIS";
+    case firsov: return "firsov";
+    case x_ray: return "x_ray";
+    default: return "unknown";
+  }
+}
+
+static const char* SurfaceModelName(G4OpticalSurfaceModel model) {
+  switch (model) {
+    case glisur: return "glisur";
+    case unified: return "unified";
+    case LUT: return "lut";
+    case DAVIS: return "davis";
+    case dichroic: return "dichroic";
+    default: return "unknown";
+  }
+}
+
+static const char* SurfaceFinishName(G4OpticalSurfaceFinish finish) {
+  switch (finish) {
+    case polished: return "polished";
+    case polishedfrontpainted: return "polishedfrontpainted";
+    case polishedbackpainted: return "polishedbackpainted";
+    case ground: return "ground";
+    case groundfrontpainted: return "groundfrontpainted";
+    case groundbackpainted: return "groundbackpainted";
+    default: return "custom";
+  }
+}
+
+DetectorConstruction::DetectorConstruction(const G4String& gdmlPath,
+                                           std::string opticsConfigPath,
+                                           int checkOverlapsN,
+                                           double qeOverride)
+  : fGdmlPath(gdmlPath),
+    fOpticsPath(std::move(opticsConfigPath)),
+    fCheckOverlapsN(checkOverlapsN),
+    fQeOverride(qeOverride) {}
 
 G4VPhysicalVolume* DetectorConstruction::Construct() {
   if (fGdmlPath.empty()) {
@@ -73,20 +127,81 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
   // Optionally remap any GDML 'Vacuum' LVs to G4_Galactic (quiet cosmetic warnings)
   RemapGDMLVacuumToGalactic();
 
-  const char* odir_env = std::getenv("FLNDR_OPTICS_DIR");
-  const std::string optics_dir = odir_env && *odir_env ? odir_env : "optics";
-  const std::string water_csv  = optics_dir + "/water_properties.csv";
-  const std::string pmt_csv    = optics_dir + "/pmt_qe.csv";
+  std::string opticsPath = fOpticsPath;
+  if (opticsPath.empty()) {
+    if (const char* envConfig = std::getenv("FLNDR_OPTICS_CONFIG")) {
+      opticsPath = envConfig;
+    } else if (const char* envDir = std::getenv("FLNDR_OPTICS_DIR")) {
+      opticsPath = std::string(envDir) + "/optics.yaml";
+    } else {
+      opticsPath = "detector/config/optics.yaml";
+    }
+  }
+
+  OpticalPropertiesResult opticsTables;
+  bool opticsLoaded = false;
+  try {
+    opticsTables = OpticalProperties::LoadFromYaml(opticsPath, fQeOverride);
+    opticsLoaded = true;
+  } catch (const std::exception& ex) {
+    const std::string msg =
+        "Failed to load optics config '" + opticsPath + "': " + ex.what();
+    G4Exception("DetectorConstruction", "OpticsConfig", FatalException, msg.c_str());
+    return worldPV;
+  }
 
   // 2) Material overrides
   auto* nist = G4NistManager::Instance();
-  bool opticsConfigured = false;
 
   // 2a) World -> true vacuum (G4_Galactic)
   auto* gal = nist->FindOrBuildMaterial("G4_Galactic");
   if (gal) {
     worldLV->SetMaterial(gal);
     G4cout << "[INFO] World material set to G4_Galactic\n";
+    if (opticsLoaded) {
+      OpticalProperties::AttachVacuumRindex(gal, opticsTables.energyGrid);
+    }
+  }
+
+  auto* waterMaterial = nist->FindOrBuildMaterial("G4_WATER");
+  if (!waterMaterial) {
+    G4Exception("DetectorConstruction", "WaterMaterial", FatalException,
+                "Failed to find or build material 'G4_WATER'.");
+  } else if (opticsLoaded && opticsTables.waterMPT) {
+    waterMaterial->SetMaterialPropertiesTable(opticsTables.waterMPT);
+    auto* mpt = waterMaterial->GetMaterialPropertiesTable();
+    auto* rindex   = mpt ? mpt->GetProperty("RINDEX")    : nullptr;
+    auto* absl     = mpt ? mpt->GetProperty("ABSLENGTH") : nullptr;
+    auto* rayleigh = mpt ? mpt->GetProperty("RAYLEIGH")  : nullptr;
+    if (!rindex || !absl || !rayleigh) {
+      G4Exception("DetectorConstruction", "Optics", FatalException,
+                  "Water material properties table missing RINDEX/ABSLENGTH/RAYLEIGH.");
+    }
+    const auto nR = rindex->GetVectorLength();
+    if (nR != absl->GetVectorLength() || nR != rayleigh->GetVectorLength()) {
+      G4Exception("DetectorConstruction", "OpticsTableSize", FatalException,
+                  "Water material property vectors have unequal lengths.");
+    }
+  }
+
+  if (opticsLoaded) {
+    const auto& ws = opticsTables.waterSummary;
+    const auto& ps = opticsTables.pmtSummary;
+    std::ostringstream waterLog;
+    waterLog.setf(std::ios::fixed);
+    waterLog << "[Optics] Water optics: λ=" << fmt_range(ws.lambdaMinNm, ws.lambdaMaxNm, 1, " nm")
+             << " (N=" << ws.npoints << "); n=" << fmt_range(ws.rindexMin, ws.rindexMax, 4)
+             << "; L_abs=" << fmt_range(ws.absorptionMinMm * 1e-3, ws.absorptionMaxMm * 1e-3, 1, " m")
+             << "; L_scat=" << fmt_range(ws.scatteringMinMm * 1e-3, ws.scatteringMaxMm * 1e-3, 1, " m");
+    G4cout << waterLog.str() << G4endl;
+
+    std::ostringstream pmtLog;
+    pmtLog.setf(std::ios::fixed);
+    pmtLog << "[Optics] PMT QE: λ=" << fmt_range(ps.lambdaMinNm, ps.lambdaMaxNm, 1, " nm")
+           << " (N=" << ps.npoints << "); <QE>_400–450nm = "
+           << std::setprecision(1) << (ps.meanQE400to450 * 100.0)
+           << " % peak=" << (ps.peakQE * 100.0) << " %";
+    G4cout << pmtLog.str() << G4endl;
   }
 
   // 2b) Can LV -> G4_WATER
@@ -98,9 +213,10 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
   auto* lvStore = G4LogicalVolumeStore::GetInstance();
   auto* canLV = lvStore->GetVolume(targetCan, /*verbose=*/false);
   if (canLV) {
-    if (auto* water = nist->FindOrBuildMaterial("G4_WATER")) {
-      canLV->SetMaterial(water);
+    if (waterMaterial) {
+      canLV->SetMaterial(waterMaterial);
       G4cout << "[INFO] Set material of '" << targetCan << "' to G4_WATER\n";
+      OpticalProperties::DumpWaterMPT(canLV->GetMaterial(), canLV->GetName());
 
       G4VPhysicalVolume* canPV = nullptr;
       {
@@ -113,32 +229,76 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
         }
       }
 
-      if (!OpticalInit::ConfigureOptics(water_csv, pmt_csv, worldPV, canPV)) {
-        G4Exception("DetectorConstruction", "Optics", FatalException,
-                    "Failed to configure optical properties.");
+      if (opticsLoaded && canPV && opticsTables.wallSurface) {
+        new G4LogicalBorderSurface("WaterToWorld", canPV,  worldPV, opticsTables.wallSurface);
+        new G4LogicalBorderSurface("WorldToWater", worldPV, canPV,  opticsTables.wallSurface);
       }
-      opticsConfigured = true;
 
-      auto* cathSurface = OpticalInit::GetPhotocathodeSurface();
+      G4OpticalSurface* cathBorderSurface = nullptr;
+      if (opticsLoaded && opticsTables.photocathodeSurface) {
+        cathBorderSurface = new G4OpticalSurface("PhotocathodeWaterBoundary");
+        cathBorderSurface->SetType(dielectric_dielectric);
+        cathBorderSurface->SetModel(unified);
+        cathBorderSurface->SetFinish(polished);
+
+        if (!opticsTables.energyGrid.empty()) {
+          auto* borderMPT = new G4MaterialPropertiesTable();
+          std::vector<G4double> energyVec(opticsTables.energyGrid.begin(), opticsTables.energyGrid.end());
+          std::vector<G4double> reflectivity(energyVec.size(), 0.0);
+
+          if (auto* srcMPT = opticsTables.photocathodeSurface->GetMaterialPropertiesTable()) {
+            if (auto* refVec = srcMPT->GetProperty("REFLECTIVITY")) {
+              const size_t n = std::min(reflectivity.size(),
+                                        static_cast<size_t>(refVec->GetVectorLength()));
+              for (size_t i = 0; i < n; ++i) {
+                reflectivity[i] = (*refVec)[i];
+              }
+            }
+          }
+
+          borderMPT->AddProperty("REFLECTIVITY",
+                                 energyVec.data(),
+                                 reflectivity.data(),
+                                 energyVec.size());
+          std::vector<G4double> zeroEff(energyVec.size(), 0.0);
+          borderMPT->AddProperty("EFFICIENCY",
+                                 energyVec.data(),
+                                 zeroEff.data(),
+                                 energyVec.size());
+          cathBorderSurface->SetMaterialPropertiesTable(borderMPT);
+        }
+      }
 
       auto* cathMat = nist->FindOrBuildMaterial("G4_Al");
       if (!cathMat) {
         G4cout << "[WARN] Material 'G4_Al' not found; skipping PMT tiling.\n";
       } else {
         const G4double kPmtRadius = 0.10 * m;
-        const G4double kPmtThick  = 0.1 * mm;
+        const G4double kPmtThick  = 0.8 * mm;
         const G4double defaultZPitch = 0.50 * m;
         const G4int   defaultNPhi   = 48;
 
         auto* pmtSol = new G4Tubs("PMT_cathode_tubs", 0., kPmtRadius, kPmtThick / 2., 0., 360 * deg);
-        auto* pmtLog = new G4LogicalVolume(pmtSol, cathMat, "PMT_cathode_log");
+        auto* pmtLog = new G4LogicalVolume(pmtSol,
+                                           opticsTables.photocathodeMaterial ? opticsTables.photocathodeMaterial : cathMat,
+                                           "PMT_cathode_log");
+        if (opticsTables.photocathodeMaterial) {
+          const size_t nGrid = !opticsTables.wavelength_nm.empty()
+                                 ? opticsTables.wavelength_nm.size()
+                                 : opticsTables.energyGrid.size();
+          G4cout << "[PMT] PhotocathodeLV material="
+                 << opticsTables.photocathodeMaterial->GetName()
+                 << " with RINDEX(λ) set (N=" << nGrid << ")" << G4endl;
+        }
 
-        auto* existingSD = canLV->GetSensitiveDetector();
+        auto* existingSD = pmtLog->GetSensitiveDetector();
         PMTSD* pmtSD = dynamic_cast<PMTSD*>(existingSD);
         if (!pmtSD) {
           pmtSD = new PMTSD("PMTSD");
           G4SDManager::GetSDMpointer()->AddNewDetector(pmtSD);
-          canLV->SetSensitiveDetector(pmtSD);
+          pmtLog->SetSensitiveDetector(pmtSD);
+          G4cout << "[PMT] SD attached to PhotocathodeLV thickness="
+                 << (kPmtThick / mm) << " mm" << G4endl;
         }
 
         const auto read_env_double = [](const char* name, double fallback) {
@@ -158,6 +318,36 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
         };
 
         G4int pmtPlaced = 0;
+        bool firstPmtMotherChecked = false;
+        G4int overlapsChecked = 0;
+        bool overlapsFound = false;
+
+        auto placePmt = [&](G4RotationMatrix* rot, const G4ThreeVector& pos) -> G4VPhysicalVolume* {
+          const G4int copyNo = pmtPlaced++;
+          const bool shouldCheckOverlap = (fCheckOverlapsN > 0 && copyNo < fCheckOverlapsN);
+          auto* pv = new G4PVPlacement(rot, pos, pmtLog, "PMT", canLV, false, copyNo, false);
+          if (pv && !firstPmtMotherChecked) {
+            auto* mother = pv->GetMotherLogical();
+            const G4String motherName = mother ? mother->GetName() : "<null>";
+            G4cout << "[CHK] pcath mother=" << motherName << G4endl;
+            if (mother != canLV) {
+              G4Exception("DetectorConstruction", "BadMother", FatalException,
+                          "Photocathode must be direct child of water LV");
+            }
+            firstPmtMotherChecked = true;
+          }
+          if (cathBorderSurface && canPV && pv) {
+            G4String surfName = "PhotocathodeSurface_" + std::to_string(copyNo + 1);
+            new G4LogicalBorderSurface(surfName, canPV, pv, cathBorderSurface);
+          }
+          if (shouldCheckOverlap && pv) {
+            ++overlapsChecked;
+            if (pv->CheckOverlaps(0.0, 0.0, false)) {
+              overlapsFound = true;
+            }
+          }
+          return pv;
+        };
 
         if (auto* waterBox = dynamic_cast<G4Box*>(canLV->GetSolid())) {
           const G4double halfX = waterBox->GetXHalfLength();
@@ -174,11 +364,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
               for (G4double y = -halfY + kYPitch; y <= halfY - kYPitch; y += kYPitch) {
                 auto rot = new G4RotationMatrix();
                 rot->rotateY(90 * deg);
-                auto* pmtPV = new G4PVPlacement(rot, {x, y, z}, pmtLog, "PMT", canLV, false, pmtPlaced++);
-                if (cathSurface && canPV && pmtPV) {
-                  G4String surfName = "PhotocathodeSurface_" + std::to_string(pmtPlaced);
-                  new G4LogicalBorderSurface(surfName, canPV, pmtPV, cathSurface);
-                }
+                placePmt(rot, {x, y, z});
               }
             }
           }
@@ -188,11 +374,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
               for (G4double y = -halfY + kYPitch; y <= halfY - kYPitch; y += kYPitch) {
                 auto rot = new G4RotationMatrix();
                 rot->rotateY(-90 * deg);
-                auto* pmtPV = new G4PVPlacement(rot, {x, y, z}, pmtLog, "PMT", canLV, false, pmtPlaced++);
-                if (cathSurface && canPV && pmtPV) {
-                  G4String surfName = "PhotocathodeSurface_" + std::to_string(pmtPlaced);
-                  new G4LogicalBorderSurface(surfName, canPV, pmtPV, cathSurface);
-                }
+                placePmt(rot, {x, y, z});
               }
             }
           }
@@ -202,11 +384,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
               for (G4double x = -halfX + kXPitch; x <= halfX - kXPitch; x += kXPitch) {
                 auto rot = new G4RotationMatrix();
                 rot->rotateX(-90 * deg);
-                auto* pmtPV = new G4PVPlacement(rot, {x, y, z}, pmtLog, "PMT", canLV, false, pmtPlaced++);
-                if (cathSurface && canPV && pmtPV) {
-                  G4String surfName = "PhotocathodeSurface_" + std::to_string(pmtPlaced);
-                  new G4LogicalBorderSurface(surfName, canPV, pmtPV, cathSurface);
-                }
+                placePmt(rot, {x, y, z});
               }
             }
           }
@@ -216,26 +394,23 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
               for (G4double x = -halfX + kXPitch; x <= halfX - kXPitch; x += kXPitch) {
                 auto rot = new G4RotationMatrix();
                 rot->rotateX(90 * deg);
-                auto* pmtPV = new G4PVPlacement(rot, {x, y, z}, pmtLog, "PMT", canLV, false, pmtPlaced++);
-                if (cathSurface && canPV && pmtPV) {
-                  G4String surfName = "PhotocathodeSurface_" + std::to_string(pmtPlaced);
-                  new G4LogicalBorderSurface(surfName, canPV, pmtPV, cathSurface);
-                }
+                placePmt(rot, {x, y, z});
               }
             }
           }
-          const int sdAttached = (canLV->GetSensitiveDetector() != nullptr) ? 1 : 0;
-          G4cout << "[PMT] placed=" << pmtPlaced << " rings=NA perRing=NA wall=1 endcaps=0\n";
+          const int sdAttached = (pmtLog->GetSensitiveDetector() != nullptr) ? 1 : 0;
+          G4cout << "[PMT] placed=" << pmtPlaced << " rings=NA perRing=NA wall=1 endcaps=0" << G4endl;
           G4cout << "[SENS] SD attached=" << sdAttached << G4endl;
         } else if (auto* tubs = dynamic_cast<G4Tubs*>(canLV->GetSolid())) {
           const G4double rOuter   = tubs->GetOuterRadius();
           const G4double zHalf    = tubs->GetZHalfLength();
           const G4double wallGap  = 5.0 * mm;
-          const G4double zMargin  = kPmtRadius;
+          const G4double zMargin  = kPmtRadius + 5.0 * cm;
           G4double zPitch = read_env_double("FLNDR_PMT_ZPITCH_M", defaultZPitch / m) * m;
           if (zPitch <= 0.0) zPitch = defaultZPitch;
           const G4int nPhi = read_env_int("FLNDR_PMT_NPHI", defaultNPhi);
-          const G4double radius = std::max(rOuter - wallGap, kPmtRadius + wallGap);
+          const G4double innerRadius = std::max(rOuter - wallGap - kPmtRadius, kPmtRadius + wallGap);
+          const G4double radius = innerRadius;
 
           int ringCount = 0;
           for (G4double z = -zHalf + zMargin; z <= zHalf - zMargin + 0.5 * zPitch; z += zPitch) {
@@ -246,34 +421,28 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
               const G4double x = radius * std::cos(phi);
               const G4double y = radius * std::sin(phi);
               auto rot = new G4RotationMatrix();
-              rot->rotateZ(phi);
               rot->rotateY(90.0 * deg);
-              auto* pmtPV = new G4PVPlacement(rot, {x, y, z}, pmtLog, "PMT", canLV, false, pmtPlaced++);
-              if (cathSurface && canPV && pmtPV) {
-                G4String surfName = "PhotocathodeSurface_" + std::to_string(pmtPlaced);
-                new G4LogicalBorderSurface(surfName, canPV, pmtPV, cathSurface);
-              }
+              rot->rotateZ(phi);
+              placePmt(rot, {x, y, z});
             }
           }
-        const int sdAttached = (canLV->GetSensitiveDetector() != nullptr) ? 1 : 0;
-        G4cout << "[PMT] placed=" << pmtPlaced
-               << " rings=" << ringCount
-               << " perRing=" << nPhi
-               << " wall=1 endcaps=0" << G4endl;
-        G4cout << "[SENS] SD attached=" << sdAttached << G4endl;
+          const int sdAttached = (pmtLog->GetSensitiveDetector() != nullptr) ? 1 : 0;
+          G4cout << "[PMT] placed=" << pmtPlaced
+                 << " rings=" << ringCount
+                 << " perRing=" << nPhi
+                 << " wall=1 endcaps=0" << G4endl;
+          G4cout << "[SENS] SD attached=" << sdAttached << G4endl;
+        }
+
+        if (fCheckOverlapsN > 0) {
+          G4cout << "[CHK] overlaps_checked=" << overlapsChecked
+                 << " overlaps_found=" << (overlapsFound ? 1 : 0) << G4endl;
+        }
       }
-    }
     }
   } else {
     G4cout << "[WARN] Logical volume '" << targetCan
            << "' not found. Skipping can material override.\n";
-  }
-
-  if (!opticsConfigured) {
-    if (!OpticalInit::ConfigureOptics(water_csv, pmt_csv, worldPV, nullptr)) {
-      G4Exception("DetectorConstruction", "Optics", FatalException,
-                  "Failed to configure optical properties.");
-    }
   }
 
   // Emit geometry summary for the primary detector solid.
@@ -293,12 +462,21 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     }
   }
 
-  if (auto* surf = OpticalInit::GetPhotocathodeSurface()) {
-    auto* mpt = surf->GetMaterialPropertiesTable();
-    const int hasEff = (mpt && mpt->GetProperty("EFFICIENCY")) ? 1 : 0;
-    const int hasRef = (mpt && mpt->GetProperty("REFLECTIVITY")) ? 1 : 0;
-    G4cout << "[SURF] photocathode surface attached: EFFICIENCY=" << hasEff
-           << " REFLECTIVITY=" << hasRef << G4endl;
+  if (opticsLoaded) {
+    if (auto* surf = opticsTables.photocathodeSurface) {
+      auto* mpt = surf->GetMaterialPropertiesTable();
+      auto* eff = mpt ? mpt->GetProperty("EFFICIENCY") : nullptr;
+      auto* ref = mpt ? mpt->GetProperty("REFLECTIVITY") : nullptr;
+      auto firstValue = [](G4MaterialPropertyVector* vec) {
+        if (!vec || vec->GetVectorLength() == 0) return 0.0;
+        return (*vec)[0];
+      };
+      G4cout << "[SURF] photocathode type=" << SurfaceTypeName(surf->GetType())
+             << " model=" << SurfaceModelName(surf->GetModel())
+             << " finish=" << SurfaceFinishName(surf->GetFinish())
+             << " EFF0=" << firstValue(eff)
+             << " REF0=" << firstValue(ref) << G4endl;
+    }
   }
 
   // 3) Simple visibility attributes (nice for ToolsSG screenshots)
@@ -311,6 +489,22 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     auto* canVis = new G4VisAttributes(G4Colour(0.2, 0.5, 0.9, 0.2));
     canVis->SetForceSolid(false);
     canLV->SetVisAttributes(canVis);
+  }
+
+  auto* surfaceTable = G4LogicalBorderSurface::GetSurfaceTable();
+  if (surfaceTable && !surfaceTable->empty()) {
+    for (const auto& kv : *surfaceTable) {
+      auto* surface = kv.second;
+      if (!surface) continue;
+      auto* v1 = surface->GetVolume1();
+      auto* v2 = surface->GetVolume2();
+      G4cout << "[SURF_TAB] " << surface->GetName()
+             << " pv1=" << (v1 ? v1->GetName() : "<null>")
+             << " pv2=" << (v2 ? v2->GetName() : "<null>") << G4endl;
+    }
+  } else {
+    G4Exception("DetectorConstruction", "SurfaceTableEmpty", FatalException,
+                "Expected at least one logical border surface.");
   }
 
   return worldPV;
