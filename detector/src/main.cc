@@ -50,6 +50,9 @@ int main(int argc, char** argv) {
   bool optDebug = false;
   int checkOverlapsN = 0;
   double qeOverride = std::numeric_limits<double>::quiet_NaN();
+  double qeFlat = std::numeric_limits<double>::quiet_NaN();
+  bool quiet = false;
+  int optVerbose = 0;
   for (int i = 1; i < argc; ++i) {
     const char* arg = argv[i];
     if (std::strncmp(arg, "--profile=", 10) == 0) {
@@ -85,6 +88,26 @@ int main(int argc, char** argv) {
       }
     } else if (std::strcmp(arg, "--opt_dbg") == 0) {
       optDebug = true;
+    } else if (std::strcmp(arg, "--quiet") == 0) {
+      quiet = true;
+    } else if (std::strncmp(arg, "--opt_verbose=", 14) == 0) {
+      try {
+        optVerbose = std::clamp(std::stoi(arg + 14), 0, 2);
+      } catch (...) {
+        optVerbose = 0;
+        G4cout << "[WARN] Invalid value for --opt_verbose ('" << (arg + 14) << "'); using 0.\n";
+      }
+    } else if (std::strcmp(arg, "--opt_verbose") == 0) {
+      if (i + 1 < argc) {
+        try {
+          optVerbose = std::clamp(std::stoi(argv[++i]), 0, 2);
+        } catch (...) {
+          optVerbose = 0;
+          G4cout << "[WARN] Invalid value for --opt_verbose ('" << argv[i] << "'); using 0.\n";
+        }
+      } else {
+        G4cout << "[WARN] --opt_verbose flag expects a value; keeping 0.\n";
+      }
     } else if (std::strncmp(arg, "--qe_override=", 15) == 0) {
       try {
         qeOverride = std::stod(arg + 15);
@@ -102,6 +125,24 @@ int main(int argc, char** argv) {
         }
       } else {
         G4cout << "[WARN] --qe_override flag expects a value; ignoring.\n";
+      }
+    } else if (std::strncmp(arg, "--qe_flat=", 10) == 0) {
+      try {
+        qeFlat = std::stod(arg + 10);
+      } catch (...) {
+        qeFlat = std::numeric_limits<double>::quiet_NaN();
+        G4cout << "[WARN] Invalid value for --qe_flat ('" << (arg + 10) << "'); ignoring.\n";
+      }
+    } else if (std::strcmp(arg, "--qe_flat") == 0) {
+      if (i + 1 < argc) {
+        try {
+          qeFlat = std::stod(argv[++i]);
+        } catch (...) {
+          qeFlat = std::numeric_limits<double>::quiet_NaN();
+          G4cout << "[WARN] Invalid value for --qe_flat ('" << argv[i] << "'); ignoring.\n";
+        }
+      } else {
+        G4cout << "[WARN] --qe_flat flag expects a value; ignoring.\n";
       }
     } else if (std::strncmp(arg, "--check_overlaps_n=", 20) == 0) {
       try {
@@ -124,7 +165,7 @@ int main(int argc, char** argv) {
     } else if (std::strcmp(arg, "--help") == 0 || std::strcmp(arg, "-h") == 0) {
       G4cout << "Usage: " << argv[0]
              << " [--profile=<name>] [--optics=<cfg.yaml>] [--pmt=<cfg.yaml>] [--opt_enable=list]"
-             << " [--opt_dbg] [--check_overlaps_n=<int>] [macro.mac]\n"
+             << " [--opt_dbg] [--quiet] [--opt_verbose=<0..2>] [--check_overlaps_n=<int>] [macro.mac]\n"
              << "Profiles: day1 (default), day2, day3, custom\n"
              << "Optics: defaults to detector/config/optics.yaml\n"
              << "PMT: defaults to detector/config/pmt.yaml (day2)\n"
@@ -155,23 +196,31 @@ int main(int argc, char** argv) {
   }
 
   G4cout << "[CFG] Optics config: " << opticsConfig << G4endl;
-  runManager->SetUserInitialization(new DetectorConstruction(gdml, opticsConfig, checkOverlapsN, qeOverride));
+  runManager->SetUserInitialization(new DetectorConstruction(gdml, opticsConfig, checkOverlapsN, qeOverride, qeFlat));
 
   auto makeDefaultOptConfig = [](const std::string& prof) {
     OpticalProcessConfig cfg;
     cfg.enableCerenkov = true;
-    cfg.enableAbsorption = false;
+    cfg.enableAbsorption = true;
     cfg.enableRayleigh = false;
     cfg.enableBoundary = true;
     cfg.enableMie = false;
-    cfg.maxPhotonsPerStep = 300;
+    cfg.maxPhotonsPerStep = 50;
     cfg.maxBetaChangePerStep = 10.0;
-    if (prof == "day2" || prof == "day3") {
-      cfg.enableMie = true;
+    if (prof == "day2") {
       cfg.enableCerenkov = true;
       cfg.enableAbsorption = true;
-      cfg.enableRayleigh = true;
       cfg.enableBoundary = true;
+      cfg.enableRayleigh = false;
+      cfg.enableMie = false;
+      cfg.maxPhotonsPerStep = 50;
+    } else if (prof == "day3") {
+      cfg.enableCerenkov = true;
+      cfg.enableAbsorption = true;
+      cfg.enableBoundary = true;
+      cfg.enableRayleigh = true;
+      cfg.enableMie = true;
+      cfg.maxPhotonsPerStep = 300;
     }
     return cfg;
   };
@@ -251,7 +300,7 @@ int main(int argc, char** argv) {
   runManager->SetUserInitialization(physicsList);
 
   RunProfileConfig runProfile;
-  runProfile.enableDigitizer = isDay2Profile;
+  runProfile.enableDigitizer = (profileNorm == "day1" || isDay2Profile || isDay3Profile);
   if (const char* envPmt = std::getenv("FLNDR_PMT_CONFIG")) {
     if (*envPmt) runProfile.pmtConfigPath = envPmt;
   }
@@ -261,10 +310,10 @@ int main(int argc, char** argv) {
   if (const char* envOut = std::getenv("FLNDR_PMTHITS_OUT")) {
     if (*envOut) runProfile.pmtOutputPath = envOut;
   }
-  if (runProfile.pmtConfigPath.empty() && isDay2Profile) {
+  if (runProfile.pmtConfigPath.empty() && (profileNorm == "day1" || isDay2Profile)) {
     runProfile.pmtConfigPath = "detector/config/pmt.yaml";
   }
-  if (runProfile.pmtOutputPath.empty() && isDay2Profile) {
+  if (runProfile.pmtOutputPath.empty() && (profileNorm == "day1" || isDay2Profile)) {
     runProfile.pmtOutputPath = "docs/day4/pmt_digi.root";
   }
 
@@ -302,6 +351,10 @@ int main(int argc, char** argv) {
   manifest.digitizerOutput = runProfile.pmtOutputPath;
   manifest.opticsOverride = optEnableOverride;
   manifest.opticalDebug = optDebug;
+  manifest.quiet = quiet;
+  manifest.opticalVerboseLevel = optVerbose;
+  manifest.qeScaleOverride = qeOverride;
+  manifest.qeFlatOverride = qeFlat;
   SetRunManifest(std::move(manifest));
 
   runManager->SetUserInitialization(new ActionInitialization(rtrk, zshift, runProfile));
@@ -309,6 +362,11 @@ int main(int argc, char** argv) {
   // Vis + UI
   auto* visManager = new G4VisExecutive; visManager->Initialize();
   auto* UImanager = G4UImanager::GetUIpointer();
+
+  if (quiet) {
+    UImanager->ApplyCommand("/run/verbose 0");
+    UImanager->ApplyCommand("/tracking/verbose 0");
+  }
 
   if (!macroArg.empty()) {
     // Batch: macro handles /run/initialize & vis

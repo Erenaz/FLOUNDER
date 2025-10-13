@@ -2,11 +2,26 @@
 Forward LHC neutrinos — water Cherenkov study.
 This repo tracks code, macros, and SLURM jobs. Build & run via Singularity on HPC3.
 
+## What’s new (instrumentation)
+
+- **Photon gun helpers**: `/fln/aimAtPMT <id> [offset_mm] [energy_eV]` fires a single optical photon along the stored PMT normal. See `macros/detector/dev/one_photon_to_pmt.mac`, `ring_probe.mac`, and `ring_uniformity.mac` for examples. Logs now show `[PMTSD:PhotonStep] volume=PMT copy=…` and `[OPT_DBG] event=N OpticalHits size=M`.
+- **Geometry registry**: every photocathode placement is recorded with position/normal so QC scripts can scan PMT rings automatically.
+- **Day profiles**: `day1` = fast optics (Cerenkov+absorption+boundary, 50 photons/step); `day2` = production/digitizer (same processes, digitizer enabled); `day3` retains the full Rayleigh/Mie set.
+- **Quality-control scripts** (all under `detector/tools/qc/`):
+  - `run_pe_yield.sh`, `qe_sweep.sh` (PE/m, QE override ratio)
+  - `run_timing.sh`, `run_darks.sh` (σ_t, dark/event)
+  - `ring_uniformity_parse.py` (CSV + optional polar plot)
+  - `run_ctest.sh` (build + `ctest -R light_yield` for the Cherenkov yield regression)
+- **One-photon QC expectations**:
+  - `[OPT_DBG] event=0 OpticalHits size=1`
+  - `[PMTDigi] evt=0 raw=1 kept≈Bernoulli(QE)`
+- **Mu50 fast macro**: `macros/detector/dev/mu50_fast.mac` (50 GeV μ⁻, 20 events) for PE/m, timing, and dark-rate sweeps.
+
 ## Detector quick start
 - Configure your environment with `source detector/GEANT4.sh`.
 - Configure and build once with `cmake -S detector -B detector/build` and `cmake --build detector/build --target flndr`.
 - Launch simulations via `detector/build/flndr [--profile=<day1|day2|day3>] [macro.mac]`. The profile toggles run-time cuts while keeping a single executable.
-- Macros now live under `macros/detector/`; e.g. `macros/detector/day1/hc.mac` or the 50 GeV muon shot `macros/single_mu.mac`.
+- Macros now live under `macros/detector/`; e.g. `macros/detector/day1/hc.mac`, `macros/detector/dev/one_photon_to_pmt.mac`, or the 50 GeV muon shot `macros/single_mu.mac`.
 
 ## Water presets
 You can swap the water absorption / scattering model at runtime:
@@ -19,7 +34,7 @@ You can swap the water absorption / scattering model at runtime:
 
 These files are verbatim YAMLs embedded in the output manifest, so production logs capture the exact curves used.
 
-## Week-2: Optical Photon Transport & PMT Response
+## Optical Photon Transport & PMT Response
 
 ### Build & run (calibration)
 ```bash

@@ -32,6 +32,10 @@ struct RunManifest {
   std::string digitizerOutput;
   std::string opticsOverride;
   bool opticalDebug = false;
+  bool quiet = false;
+  int  opticalVerboseLevel = 0;
+  double qeScaleOverride = std::numeric_limits<double>::quiet_NaN();
+  double qeFlatOverride = std::numeric_limits<double>::quiet_NaN();
 };
 
 void SetRunManifest(RunManifest manifest);

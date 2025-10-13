@@ -7,8 +7,12 @@
 #include <G4OpticalPhoton.hh>
 #include <G4OpBoundaryProcess.hh>
 #include <G4ProcessManager.hh>
+
+#include "RunManifest.hh"
 #include <G4SystemOfUnits.hh>
 #include <G4ios.hh>
+
+#include <algorithm>
 
 namespace {
 
@@ -52,11 +56,12 @@ void PhysicsList::ConstructProcess() {
   if (!procMgr) return;
   auto* processList = procMgr->GetProcessList();
   if (!processList) return;
+  const int verboseLevel = std::clamp(GetRunManifest().opticalVerboseLevel, 0, 2);
   const size_t n = processList->size();
   for (size_t i = 0; i < n; ++i) {
     auto* process = (*processList)[i];
     if (auto* boundary = dynamic_cast<G4OpBoundaryProcess*>(process)) {
-      boundary->SetVerboseLevel(2);
+      boundary->SetVerboseLevel(verboseLevel);
     }
   }
 }

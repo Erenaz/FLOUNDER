@@ -4,6 +4,7 @@
 #include <TNamed.h>
 
 #include <algorithm>
+#include <cmath>
 #include <vector>
 #include <iomanip>
 #include <ios>
@@ -67,7 +68,11 @@ std::string BuildManifestJson(const RunManifest& m) {
   appendKV("cxx_flags", m.cxxFlags);
   appendBool("digitizer_enabled", m.digitizerEnabled);
   appendKV("digitizer_output", m.digitizerOutput);
-  appendKV("optics_override", m.opticsOverride, true);
+  appendKV("optics_override", m.opticsOverride);
+  appendBool("quiet", m.quiet);
+  appendKV("optical_verbose", std::to_string(m.opticalVerboseLevel));
+  appendKV("qe_scale_override", std::isfinite(m.qeScaleOverride) ? std::to_string(m.qeScaleOverride) : "nan");
+  appendKV("qe_flat_override", std::isfinite(m.qeFlatOverride) ? std::to_string(m.qeFlatOverride) : "nan", true);
   os << "}";
   return os.str();
 }

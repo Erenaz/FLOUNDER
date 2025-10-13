@@ -146,6 +146,7 @@ set(FLNDR_COMMON_SRCS
   src/IO.cc
   src/PMTSD.cc
   src/RunAction.cc
+  src/GeometryRegistry.cc
 )
 
 set(FLNDR_COMMON_INCLUDES
@@ -165,15 +166,6 @@ target_compile_options(flndr PRIVATE -Wall -Wextra -Wpedantic)
 
 include(CTest)
 if (BUILD_TESTING)
-  add_executable(test_light_yield
-    tests/test_light_yield.cc
-    src/OpticalProperties.cc
-  )
-  target_include_directories(test_light_yield PRIVATE ${FLNDR_COMMON_INCLUDES})
-  target_compile_definitions(test_light_yield PRIVATE FLNDR_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
-  target_link_libraries(test_light_yield PRIVATE ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} Qt5::Core Qt5::Gui Qt5::Widgets Qt5::OpenGL Qt5::3DCore Qt5::3DExtras Qt5::3DRender ZLIB::ZLIB ${FLNDR_YAML_TARGET})
-  add_test(NAME light_yield COMMAND test_light_yield)
-
   add_executable(test_timing
     tests/test_timing.cc
     src/Digitizer.cc
@@ -182,3 +174,12 @@ if (BUILD_TESTING)
   target_link_libraries(test_timing PRIVATE ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} Qt5::Core Qt5::Gui Qt5::Widgets Qt5::OpenGL Qt5::3DCore Qt5::3DExtras Qt5::3DRender ZLIB::ZLIB ${FLNDR_YAML_TARGET})
   add_test(NAME timing COMMAND test_timing)
 endif()
+add_executable(test_light_yield
+  tests/test_light_yield.cc
+  ${FLNDR_COMMON_SRCS}
+)
+target_include_directories(test_light_yield PRIVATE ${FLNDR_COMMON_INCLUDES})
+target_compile_definitions(test_light_yield PRIVATE FLNDR_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
+target_link_libraries(test_light_yield PRIVATE ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${FLNDR_YAML_TARGET})
+
+add_test(NAME light_yield COMMAND test_light_yield)

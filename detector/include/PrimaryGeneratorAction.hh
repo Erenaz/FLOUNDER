@@ -24,6 +24,8 @@ public:
 private:
   RootrackerPrimaryGenerator* EnsureRootracker();
   void AnnounceModeOnce();
+  void AimAtPMTCommand(const G4String& args);
+  void AimAtPMT(int id, double offset_mm, double energy_eV);
 
   G4String fRootFile;
   G4double fZshiftMM = 0.0;

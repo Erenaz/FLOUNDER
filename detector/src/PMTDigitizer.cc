@@ -259,16 +259,18 @@ void PMTDigitizer::ensureInitialized() {
     cfgLoaded_ = true;
     const double meanQE = mean_qe_in_window(cfg_.wavelengths_nm, cfg_.qe_curve, 400.0, 450.0);
     const double peakQE = cfg_.qe_curve.empty() ? 0.0 : *std::max_element(cfg_.qe_curve.begin(), cfg_.qe_curve.end());
-    G4cout << "[PMTDigi] Loaded config '" << configPath_ << "'"
-           << " qe_scale=" << cfg_.qe_scale
-           << " sigma_ns=" << sigma_ns_
-           << " dark_rate=" << cfg_.dark_rate_hz << " Hz"
-           << " threshold=" << cfg_.threshold_npe << " PE"
-           << " gate=" << cfg_.gate_ns << " ns"
-           << " qe_points=" << cfg_.wavelengths_nm.size()
-           << " meanQE(400-450nm)=" << std::fixed << std::setprecision(2) << meanQE * cfg_.qe_scale * 100.0 << "%"
-           << " peakQE=" << peakQE * cfg_.qe_scale * 100.0 << "%"
-           << G4endl;
+    if (!GetRunManifest().quiet) {
+      G4cout << "[PMTDigi] Loaded config '" << configPath_ << "'"
+             << " qe_scale=" << cfg_.qe_scale
+             << " sigma_ns=" << sigma_ns_
+             << " dark_rate=" << cfg_.dark_rate_hz << " Hz"
+             << " threshold=" << cfg_.threshold_npe << " PE"
+             << " gate=" << cfg_.gate_ns << " ns"
+             << " qe_points=" << cfg_.wavelengths_nm.size()
+             << " meanQE(400-450nm)=" << std::fixed << std::setprecision(2) << meanQE * cfg_.qe_scale * 100.0 << "%"
+             << " peakQE=" << peakQE * cfg_.qe_scale * 100.0 << "%"
+             << G4endl;
+    }
   }
 
   if (hitsCollectionId_ < 0) {
@@ -329,8 +331,10 @@ void PMTDigitizer::cachePMTs() {
   }
   allPmts_.assign(unique.begin(), unique.end());
   std::sort(allPmts_.begin(), allPmts_.end());
-  G4cout << "[PMTDigi] Cached " << allPmts_.size()
-         << " PMT placements for dark noise sampling." << G4endl;
+  if (!GetRunManifest().quiet) {
+    G4cout << "[PMTDigi] Cached " << allPmts_.size()
+           << " PMT placements for dark noise sampling." << G4endl;
+  }
 }
 
 void PMTDigitizer::BeginOfEventAction(const G4Event* event) {
@@ -473,7 +477,7 @@ void PMTDigitizer::digitizeEvent(const G4Event* event) {
   }
 
   static bool printedSample = false;
-  if (!printedSample) {
+  if (!GetRunManifest().quiet && !printedSample) {
     G4cout << "[PMTDigi] sample evt0 -> raw=" << rawCount
            << " kept=" << keptCount
            << " dark=" << darkCount << G4endl;

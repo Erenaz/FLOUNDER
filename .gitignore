@@ -13,3 +13,23 @@ Simulations/genie_xsec/
 
 # Notebook checkpoints
 **/.ipynb_checkpoints/
+detector/build/
+
+# Build directories
+detector/build/
+**/build/
+*.o
+*.so
+*.dylib
+*.exe
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+# Output files (if not needed in repo)
+out/
+logs/
+*.root

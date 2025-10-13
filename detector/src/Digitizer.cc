@@ -216,9 +216,8 @@ void DigitizerEventAction::ConfigureFromEnv(){
   params_.TWIN_HI_ns = dbl("DIGI_TWIN_HI_NS", params_.TWIN_HI_ns);
 }
 
-void DigitizerEventAction::BeginOfEventAction(const G4Event*){
-  const auto* rm = G4RunManager::GetRunManager();
-  evtid_  = rm->GetCurrentEvent()->GetEventID();
+void DigitizerEventAction::BeginOfEventAction(const G4Event* event){
+  evtid_ = event ? event->GetEventID() : -1;
   t0_ns_  = PrimaryInfo::T0ns();
   hits_ev_.clear();
   if (!writer_) {

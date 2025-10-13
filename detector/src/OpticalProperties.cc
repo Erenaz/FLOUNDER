@@ -388,7 +388,8 @@ WaterOpticsSummaryYaml compute_water_summary(const VecD& wavelengths,
 } // namespace
 
 OpticalPropertiesResult OpticalProperties::LoadFromYaml(const std::string& path,
-                                                         double qeOverride) {
+                                                         double qeScale,
+                                                         double qeFlat) {
   YAML::Node root = YAML::LoadFile(path);
 
   if (!root || !root.IsMap()) {
@@ -502,13 +503,13 @@ OpticalPropertiesResult OpticalProperties::LoadFromYaml(const std::string& path,
     v = clip_unit_interval(v);
   }
 
-  if (std::isfinite(qeOverride)) {
-    for (double& v : pmtQE) {
-      v = clip_unit_interval(v * qeOverride);
-    }
-    const double peak = pmtQE.empty() ? 0.0 : *std::max_element(pmtQE.begin(), pmtQE.end());
-    G4cout << "[PMT.QE] override applied: scale=" << qeOverride
-           << " new_peak=" << peak << G4endl;
+  double scaleOverride = std::numeric_limits<double>::quiet_NaN();
+  double flatOverride = std::numeric_limits<double>::quiet_NaN();
+  if (std::isfinite(qeScale) && qeScale >= 0.0) {
+    scaleOverride = qeScale;
+  }
+  if (std::isfinite(qeFlat) && qeFlat >= 0.0) {
+    flatOverride = qeFlat;
   }
 
   double maxQEFraction = pmtQE.empty() ? 0.0 : *std::max_element(pmtQE.begin(), pmtQE.end());
@@ -523,6 +524,20 @@ OpticalPropertiesResult OpticalProperties::LoadFromYaml(const std::string& path,
     maxQEFraction = 0.25;
     G4cout << "[PMT.QE] WARNING: loaded QE is zero; using fallback box QE 25% (300–500 nm)." << G4endl;
   }
+
+  if (std::isfinite(flatOverride)) {
+    double val = clip_unit_interval(flatOverride);
+    std::fill(pmtQE.begin(), pmtQE.end(), val);
+    G4cout << "[PMT.QE] flat override=" << val << G4endl;
+  } else if (std::isfinite(scaleOverride)) {
+    for (double& v : pmtQE) {
+      v = clip_unit_interval(v * scaleOverride);
+    }
+    const double peak = pmtQE.empty() ? 0.0 : *std::max_element(pmtQE.begin(), pmtQE.end());
+    G4cout << "[PMT.QE] override applied: scale=" << scaleOverride
+           << " new_peak=" << peak << G4endl;
+  }
+
   LogQESamples(wavelengths, pmtQE);
 
   VecD pmtReflectivity;
@@ -623,7 +638,7 @@ OpticalPropertiesResult OpticalProperties::LoadFromYaml(const std::string& path,
 }
 
 OpticalPropertiesResult OpticalProperties::LoadFromYaml(const std::string& path) {
-  return LoadFromYaml(path, std::numeric_limits<double>::quiet_NaN());
+  return LoadFromYaml(path, std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN());
 }
 
 void OpticalProperties::AttachVacuumRindex(G4Material* vacuum,

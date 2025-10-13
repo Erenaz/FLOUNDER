@@ -1,5 +1,6 @@
 #pragma once
 
+#include <limits>
 #include <string>
 #include <vector>
 
@@ -45,7 +46,8 @@ class OpticalProperties {
 public:
   static OpticalPropertiesResult LoadFromYaml(const std::string& path);
   static OpticalPropertiesResult LoadFromYaml(const std::string& path,
-                                              double qeOverride);
+                                              double qeScale,
+                                              double qeFlat = std::numeric_limits<double>::quiet_NaN());
 
   static void AttachVacuumRindex(G4Material* vacuum,
                                  const std::vector<G4double>& energies);

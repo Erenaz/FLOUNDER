@@ -11,6 +11,7 @@
 #include "G4Event.hh"
 #include "G4LogicalVolumeStore.hh"
 #include "G4PhysicalVolumeStore.hh"
+#include "RunManifest.hh"
 
 #include <algorithm>
 #include <atomic>
@@ -32,17 +33,6 @@ void PMTSD::Initialize(G4HCofThisEvent* hce) {
 }
 
 G4bool PMTSD::ProcessHits(G4Step* step, G4TouchableHistory*) {
-  if (auto* trk = step->GetTrack(); trk && trk->GetDefinition() == G4OpticalPhoton::OpticalPhotonDefinition()) {
-    static std::atomic<int> seen{0};
-    if (seen.fetch_add(1) < 10) {
-      const auto* post = step->GetPostStepPoint();
-      auto* postPV = post ? post->GetPhysicalVolume() : nullptr;
-      G4cout << "[PMTSD:PhotonStep] pos=" << (post ? post->GetPosition() : G4ThreeVector())
-             << " volume=" << (postPV ? postPV->GetName() : "<null>")
-             << G4endl;
-    }
-  }
-
   auto* track = step->GetTrack();
   if (track->GetDefinition() != G4OpticalPhoton::OpticalPhotonDefinition()) {
     return false;
@@ -59,12 +49,15 @@ G4bool PMTSD::ProcessHits(G4Step* step, G4TouchableHistory*) {
   auto* prePV  = preTouchable->GetVolume();
   if (!postPV || !prePV) return false;
 
-  auto* postLV = postPV->GetLogicalVolume();
-  if (!postLV) return false;
-  if (postLV->GetName() != "PMT_cathode_log") return false;
-  if (prePV->GetLogicalVolume() == postLV) return false;
+  auto* postLV = postPV ? postPV->GetLogicalVolume() : nullptr;
+  auto* preLV  = prePV ? prePV->GetLogicalVolume() : nullptr;
+  if ((!postLV || postLV->GetName() != "PMT_cathode_log") &&
+      (!preLV || preLV->GetName() != "PMT_cathode_log")) {
+    return false;
+  }
 
-  const int copy = postPV->GetCopyNo();
+  const auto* targetPV = (postLV && postLV->GetName() == "PMT_cathode_log") ? postPV : prePV;
+  const int copy = targetPV ? targetPV->GetCopyNo() : -1;
   const G4double time = post->GetGlobalTime();
   const G4double energy = pre->GetKineticEnergy();
   G4double wavelength_nm = 0.0;
@@ -75,6 +68,17 @@ G4bool PMTSD::ProcessHits(G4Step* step, G4TouchableHistory*) {
   hits_->insert(new PMTHit(copy, time, 0.0, wavelength_nm, /*flags=*/0));
   ++totalHits_;
   ++hitsThisEvent_;
+
+  if (!GetRunManifest().quiet) {
+    static std::atomic<int> debugCount{0};
+    if (debugCount.fetch_add(1) < 20) {
+      const auto* hitPV = targetPV;
+      G4cout << "[PMTSD:PhotonStep] event=" << currentEventId_
+             << " volume=" << (hitPV ? hitPV->GetName() : "<null>")
+             << " copy=" << copy
+             << G4endl;
+    }
+  }
 
   track->SetTrackStatus(fStopAndKill);
   return true;
@@ -91,9 +95,9 @@ void PMTSD::EndOfEvent(G4HCofThisEvent*) {
 
   if (currentEventId_ >= 0) {
     G4cout << "[OPT_DBG] event=" << currentEventId_
-           << " n_optical_hits=" << hitsThisEvent_ << G4endl;
+           << " OpticalHits size=" << hitsThisEvent_ << G4endl;
   } else {
-    G4cout << "[OPT_DBG] event=<unknown> n_optical_hits=" << hitsThisEvent_ << G4endl;
+    G4cout << "[OPT_DBG] event=<unknown> OpticalHits size=" << hitsThisEvent_ << G4endl;
   }
   hitsThisEvent_ = 0;
 
@@ -106,6 +110,8 @@ void PMTSD::EndOfEvent(G4HCofThisEvent*) {
 void PMTSD::LogAttachmentsOnce() {
   if (attachmentsLogged_) return;
   attachmentsLogged_ = true;
+
+  if (GetRunManifest().quiet) return;
 
   auto* lvStore = G4LogicalVolumeStore::GetInstance();
   auto* pvStore = G4PhysicalVolumeStore::GetInstance();

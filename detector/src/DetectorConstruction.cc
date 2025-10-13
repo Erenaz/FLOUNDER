@@ -1,6 +1,7 @@
 #include "DetectorConstruction.hh"
 #include "globals.hh"
 #include "OpticalProperties.hh"
+#include "GeometryRegistry.hh"
 
 #include <G4Box.hh>
 #include <G4Colour.hh>
@@ -103,11 +104,13 @@ static const char* SurfaceFinishName(G4OpticalSurfaceFinish finish) {
 DetectorConstruction::DetectorConstruction(const G4String& gdmlPath,
                                            std::string opticsConfigPath,
                                            int checkOverlapsN,
-                                           double qeOverride)
+                                           double qeOverride,
+                                           double qeFlat)
   : fGdmlPath(gdmlPath),
     fOpticsPath(std::move(opticsConfigPath)),
     fCheckOverlapsN(checkOverlapsN),
-    fQeOverride(qeOverride) {}
+    fQeOverride(qeOverride),
+    fQeFlat(qeFlat) {}
 
 G4VPhysicalVolume* DetectorConstruction::Construct() {
   if (fGdmlPath.empty()) {
@@ -123,6 +126,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
                 "World volume is null after parsing GDML.");
   }
   auto* worldLV = worldPV->GetLogicalVolume();
+
+  GeometryRegistry::Instance().ClearPMTs();
 
   // Optionally remap any GDML 'Vacuum' LVs to G4_Galactic (quiet cosmetic warnings)
   RemapGDMLVacuumToGalactic();
@@ -141,7 +146,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
   OpticalPropertiesResult opticsTables;
   bool opticsLoaded = false;
   try {
-    opticsTables = OpticalProperties::LoadFromYaml(opticsPath, fQeOverride);
+    opticsTables = OpticalProperties::LoadFromYaml(opticsPath, fQeOverride, fQeFlat);
     opticsLoaded = true;
   } catch (const std::exception& ex) {
     const std::string msg =
@@ -243,28 +248,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
 
         if (!opticsTables.energyGrid.empty()) {
           auto* borderMPT = new G4MaterialPropertiesTable();
-          std::vector<G4double> energyVec(opticsTables.energyGrid.begin(), opticsTables.energyGrid.end());
-          std::vector<G4double> reflectivity(energyVec.size(), 0.0);
-
-          if (auto* srcMPT = opticsTables.photocathodeSurface->GetMaterialPropertiesTable()) {
-            if (auto* refVec = srcMPT->GetProperty("REFLECTIVITY")) {
-              const size_t n = std::min(reflectivity.size(),
-                                        static_cast<size_t>(refVec->GetVectorLength()));
-              for (size_t i = 0; i < n; ++i) {
-                reflectivity[i] = (*refVec)[i];
-              }
-            }
-          }
-
-          borderMPT->AddProperty("REFLECTIVITY",
-                                 energyVec.data(),
-                                 reflectivity.data(),
-                                 energyVec.size());
-          std::vector<G4double> zeroEff(energyVec.size(), 0.0);
-          borderMPT->AddProperty("EFFICIENCY",
-                                 energyVec.data(),
-                                 zeroEff.data(),
-                                 energyVec.size());
           cathBorderSurface->SetMaterialPropertiesTable(borderMPT);
         }
       }
@@ -346,6 +329,20 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
               overlapsFound = true;
             }
           }
+
+          G4ThreeVector outward(0, 0, 1);
+          if (rot) {
+            outward = (*rot)(outward);
+          } else if (pos.mag2() > 0.0) {
+            outward = pos.unit();
+          }
+          G4ThreeVector normal = -outward;
+          if (normal.mag2() > 0.0) {
+            normal = normal.unit();
+          } else {
+            normal = G4ThreeVector(0, 0, 1);
+          }
+          GeometryRegistry::Instance().RegisterPMT(copyNo, pos, normal);
           return pv;
         };
 
