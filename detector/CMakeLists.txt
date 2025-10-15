@@ -169,6 +169,7 @@ if (BUILD_TESTING)
   add_executable(test_timing
     tests/test_timing.cc
     src/Digitizer.cc
+    src/RunManifest.cc
   )
   target_include_directories(test_timing PRIVATE ${FLNDR_COMMON_INCLUDES})
   target_link_libraries(test_timing PRIVATE ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} Qt5::Core Qt5::Gui Qt5::Widgets Qt5::OpenGL Qt5::3DCore Qt5::3DExtras Qt5::3DRender ZLIB::ZLIB ${FLNDR_YAML_TARGET})
@@ -183,3 +184,12 @@ target_compile_definitions(test_light_yield PRIVATE FLNDR_SOURCE_DIR="${CMAKE_CU
 target_link_libraries(test_light_yield PRIVATE ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} ${FLNDR_YAML_TARGET})
 
 add_test(NAME light_yield COMMAND test_light_yield)
+
+add_test(NAME qc_qe_sweep_ratio
+  COMMAND bash ${CMAKE_SOURCE_DIR}/tests/test_qe_sweep_ratio.sh)
+
+add_test(NAME qc_timing_burst_sigma
+  COMMAND bash ${CMAKE_SOURCE_DIR}/tests/test_timing_burst_sigma.sh)
+
+add_test(NAME qc_dark_rate_poisson
+  COMMAND bash ${CMAKE_SOURCE_DIR}/tests/test_dark_rate_poisson.sh)

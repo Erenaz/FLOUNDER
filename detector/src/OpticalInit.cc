@@ -93,16 +93,14 @@ namespace OpticalInit {
 
       if (!gPhotocathodeSurface) {
         gPhotocathodeSurface = new G4OpticalSurface("PhotocathodeSurface",
-                                                    unified, polished, dielectric_metal);
+                                                    unified, polished, dielectric_dielectric);
       }
       if (!ps.energy.empty()) {
-        std::vector<G4double> reflectivity(ps.efficiency.size(), 0.0);
-        for (size_t i = 0; i < ps.efficiency.size(); ++i) {
-          reflectivity[i] = std::max(0.0, 1.0 - ps.efficiency[i]);
-        }
+        std::vector<G4double> zeroEfficiency(ps.efficiency.size(), 0.0);
+        std::vector<G4double> zeroReflect(ps.efficiency.size(), 0.0);
         auto* cathodeMPT = new G4MaterialPropertiesTable();
-        cathodeMPT->AddProperty("EFFICIENCY",   ps.energy, ps.efficiency);
-        cathodeMPT->AddProperty("REFLECTIVITY", ps.energy, reflectivity);
+        cathodeMPT->AddProperty("EFFICIENCY",   ps.energy, zeroEfficiency);
+        cathodeMPT->AddProperty("REFLECTIVITY", ps.energy, zeroReflect);
         gPhotocathodeSurface->SetMaterialPropertiesTable(cathodeMPT);
       }
 

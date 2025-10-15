@@ -2,7 +2,7 @@
 set -euo pipefail
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-repo_root="$(cd "$script_dir/../.." && pwd)"
+repo_root="$(cd "$script_dir/../../.." && pwd)"
 
 source "$repo_root/detector/GEANT4.sh"
 
@@ -21,9 +21,16 @@ cat <<'MAC' > "$outdir/mu50_fast.mac"
 /run/beamOn 20
 MAC
 
-$repo_root/detector/build/flndr --profile=day2 --quiet \
-  --optics=detector/config/optics_clear.yaml \
-  --opt_enable=cerenkov,abs,boundary \
-  "$outdir/mu50_fast.mac"
+if [[ ! -f "$rootfile" ]]; then
+  echo "[run_pe_yield] Generating $rootfile ..."
+  FLNDR_PMTHITS_OUT="$rootfile" \
+    "$repo_root/detector/build/flndr" --profile=day2 --quiet --summary_every=0 \
+    --optics=detector/config/optics_clear.yaml \
+    --opt_enable=cerenkov,abs,boundary \
+    --threshold_pe=0 \
+    "$outdir/mu50_fast.mac"
+else
+  echo "[run_pe_yield] Reusing existing $rootfile"
+fi
 
 python "$repo_root/detector/tools/qc/pe_yield.py" "$rootfile"

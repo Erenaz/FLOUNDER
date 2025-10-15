@@ -25,7 +25,8 @@ private:
   RootrackerPrimaryGenerator* EnsureRootracker();
   void AnnounceModeOnce();
   void AimAtPMTCommand(const G4String& args);
-  void AimAtPMT(int id, double offset_mm, double energy_eV);
+  void AimAtPMT(int id, double offset_mm, double energy_eV, int count);
+  void SetPhotonGunCount(int count);
 
   G4String fRootFile;
   G4double fZshiftMM = 0.0;
@@ -35,6 +36,7 @@ private:
 
   G4String fMode = "rootracker";
   bool     fAnnounced = false;
+  int      fGunPhotonCount = 1;
 
   std::unique_ptr<G4GenericMessenger> fMessenger;
 };

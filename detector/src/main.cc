@@ -17,6 +17,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <optional>
 
 int main(int argc, char** argv) {
   auto* runManager = G4RunManagerFactory::CreateRunManager(G4RunManagerType::Default);
@@ -51,8 +52,36 @@ int main(int argc, char** argv) {
   int checkOverlapsN = 0;
   double qeOverride = std::numeric_limits<double>::quiet_NaN();
   double qeFlat = std::numeric_limits<double>::quiet_NaN();
+  double thresholdPE = std::numeric_limits<double>::quiet_NaN();
   bool quiet = false;
   int optVerbose = 0;
+  int summaryEvery = 0;
+  std::optional<double> digitizerQeFlat;
+  std::optional<double> digitizerQeScale;
+  std::optional<double> digitizerThreshold;
+  bool timingBoundaryOnly = false;
+  bool digitizerEnableTTS = true;
+  bool digitizerEnableJitter = true;
+  std::string digitizerGateMode = "standard";
+  std::optional<double> digitizerGateNsOverride;
+
+  auto parseToggle01 = [&](const char* flagName, const std::string& value, bool& target) {
+    if (value == "0") {
+      target = false;
+    } else if (value == "1") {
+      target = true;
+    } else {
+      G4cout << "[WARN] Invalid value for " << flagName << " ('" << value
+             << "'); keeping " << (target ? "1" : "0") << ".\n";
+    }
+  };
+
+  auto toLower = [](std::string s) {
+    std::transform(s.begin(), s.end(), s.begin(),
+                   [](unsigned char c){ return static_cast<char>(std::tolower(c)); });
+    return s;
+  };
+
   for (int i = 1; i < argc; ++i) {
     const char* arg = argv[i];
     if (std::strncmp(arg, "--profile=", 10) == 0) {
@@ -108,6 +137,26 @@ int main(int argc, char** argv) {
       } else {
         G4cout << "[WARN] --opt_verbose flag expects a value; keeping 0.\n";
       }
+    } else if (std::strncmp(arg, "--summary_every=", 16) == 0) {
+      try {
+        summaryEvery = std::max(0, std::stoi(arg + 16));
+      } catch (...) {
+        summaryEvery = 0;
+        G4cout << "[WARN] Invalid value for --summary_every ('" << (arg + 16) << "'); using 0.\n";
+      }
+    } else if (std::strcmp(arg, "--summary_every") == 0) {
+      if (i + 1 < argc) {
+        try {
+          summaryEvery = std::max(0, std::stoi(argv[++i]));
+        } catch (...) {
+          summaryEvery = 0;
+          G4cout << "[WARN] Invalid value for --summary_every ('" << argv[i] << "'); using 0.\n";
+        }
+      } else {
+        G4cout << "[WARN] --summary_every flag expects a value; keeping 0.\n";
+      }
+    } else if (std::strcmp(arg, "--timing_opt_boundary_only") == 0) {
+      timingBoundaryOnly = true;
     } else if (std::strncmp(arg, "--qe_override=", 15) == 0) {
       try {
         qeOverride = std::stod(arg + 15);
@@ -129,20 +178,112 @@ int main(int argc, char** argv) {
     } else if (std::strncmp(arg, "--qe_flat=", 10) == 0) {
       try {
         qeFlat = std::stod(arg + 10);
+        digitizerQeFlat = qeFlat;
       } catch (...) {
         qeFlat = std::numeric_limits<double>::quiet_NaN();
+        digitizerQeFlat.reset();
         G4cout << "[WARN] Invalid value for --qe_flat ('" << (arg + 10) << "'); ignoring.\n";
       }
     } else if (std::strcmp(arg, "--qe_flat") == 0) {
       if (i + 1 < argc) {
         try {
           qeFlat = std::stod(argv[++i]);
+          digitizerQeFlat = qeFlat;
         } catch (...) {
           qeFlat = std::numeric_limits<double>::quiet_NaN();
+          digitizerQeFlat.reset();
           G4cout << "[WARN] Invalid value for --qe_flat ('" << argv[i] << "'); ignoring.\n";
         }
       } else {
         G4cout << "[WARN] --qe_flat flag expects a value; ignoring.\n";
+      }
+    } else if (std::strncmp(arg, "--qe_scale=", 11) == 0) {
+      try {
+        digitizerQeScale = std::stod(arg + 11);
+      } catch (...) {
+        digitizerQeScale.reset();
+        G4cout << "[WARN] Invalid value for --qe_scale ('" << (arg + 11) << "'); ignoring.\n";
+      }
+    } else if (std::strcmp(arg, "--qe_scale") == 0) {
+      if (i + 1 < argc) {
+        try {
+          digitizerQeScale = std::stod(argv[++i]);
+        } catch (...) {
+          digitizerQeScale.reset();
+          G4cout << "[WARN] Invalid value for --qe_scale ('" << argv[i] << "'); ignoring.\n";
+        }
+      } else {
+        G4cout << "[WARN] --qe_scale flag expects a value; ignoring.\n";
+      }
+    } else if (std::strncmp(arg, "--threshold_pe=", 14) == 0) {
+      try {
+        std::string valueStr = arg + 14;
+        if (!valueStr.empty() && valueStr.front() == '=') {
+          valueStr.erase(0, 1);
+        }
+        thresholdPE = std::stod(valueStr);
+        digitizerThreshold = thresholdPE;
+      } catch (...) {
+        thresholdPE = std::numeric_limits<double>::quiet_NaN();
+        digitizerThreshold.reset();
+        G4cout << "[WARN] Invalid value for --threshold_pe ('" << (arg + 14) << "'); ignoring.\n";
+      }
+    } else if (std::strcmp(arg, "--threshold_pe") == 0) {
+      if (i + 1 < argc) {
+        try {
+          thresholdPE = std::stod(argv[++i]);
+          digitizerThreshold = thresholdPE;
+        } catch (...) {
+          thresholdPE = std::numeric_limits<double>::quiet_NaN();
+          digitizerThreshold.reset();
+          G4cout << "[WARN] Invalid value for --threshold_pe ('" << argv[i] << "'); ignoring.\n";
+        }
+      } else {
+        G4cout << "[WARN] --threshold_pe flag expects a value; ignoring.\n";
+      }
+    } else if (std::strncmp(arg, "--enable_tts=", 13) == 0) {
+      parseToggle01("--enable_tts", std::string(arg + 13), digitizerEnableTTS);
+    } else if (std::strcmp(arg, "--enable_tts") == 0) {
+      if (i + 1 < argc) {
+        parseToggle01("--enable_tts", argv[++i], digitizerEnableTTS);
+      } else {
+        G4cout << "[WARN] --enable_tts flag expects 0 or 1; keeping "
+               << (digitizerEnableTTS ? "1.\n" : "0.\n");
+      }
+    } else if (std::strncmp(arg, "--enable_jitter=", 16) == 0) {
+      parseToggle01("--enable_jitter", std::string(arg + 16), digitizerEnableJitter);
+    } else if (std::strcmp(arg, "--enable_jitter") == 0) {
+      if (i + 1 < argc) {
+        parseToggle01("--enable_jitter", argv[++i], digitizerEnableJitter);
+      } else {
+        G4cout << "[WARN] --enable_jitter flag expects 0 or 1; keeping "
+               << (digitizerEnableJitter ? "1.\n" : "0.\n");
+      }
+    } else if (std::strncmp(arg, "--gate_mode=", 12) == 0) {
+      digitizerGateMode = toLower(std::string(arg + 12));
+    } else if (std::strcmp(arg, "--gate_mode") == 0) {
+      if (i + 1 < argc) {
+        digitizerGateMode = toLower(std::string(argv[++i]));
+      } else {
+        G4cout << "[WARN] --gate_mode flag expects a value; keeping '" << digitizerGateMode << "'.\n";
+      }
+    } else if (std::strncmp(arg, "--gate_ns_override=", 19) == 0) {
+      try {
+        digitizerGateNsOverride = std::stod(arg + 19);
+      } catch (...) {
+        digitizerGateNsOverride.reset();
+        G4cout << "[WARN] Invalid value for --gate_ns_override ('" << (arg + 19) << "'); ignoring.\n";
+      }
+    } else if (std::strcmp(arg, "--gate_ns_override") == 0) {
+      if (i + 1 < argc) {
+        try {
+          digitizerGateNsOverride = std::stod(argv[++i]);
+        } catch (...) {
+          digitizerGateNsOverride.reset();
+          G4cout << "[WARN] Invalid value for --gate_ns_override ('" << argv[i] << "'); ignoring.\n";
+        }
+      } else {
+        G4cout << "[WARN] --gate_ns_override flag expects a value; ignoring.\n";
       }
     } else if (std::strncmp(arg, "--check_overlaps_n=", 20) == 0) {
       try {
@@ -165,7 +306,10 @@ int main(int argc, char** argv) {
     } else if (std::strcmp(arg, "--help") == 0 || std::strcmp(arg, "-h") == 0) {
       G4cout << "Usage: " << argv[0]
              << " [--profile=<name>] [--optics=<cfg.yaml>] [--pmt=<cfg.yaml>] [--opt_enable=list]"
-             << " [--opt_dbg] [--quiet] [--opt_verbose=<0..2>] [--check_overlaps_n=<int>] [macro.mac]\n"
+             << " [--opt_dbg] [--quiet] [--opt_verbose=<0..2>] [--summary_every=<int>]"
+             << " [--qe_flat=<float>] [--qe_scale=<float>] [--threshold_pe=<float>] [--enable_tts=0|1] [--enable_jitter=0|1]"
+             << " [--gate_mode=<standard|centered|off>] [--gate_ns_override=<float>] [--timing_opt_boundary_only]"
+             << " [--check_overlaps_n=<int>] [macro.mac]\n"
              << "Profiles: day1 (default), day2, day3, custom\n"
              << "Optics: defaults to detector/config/optics.yaml\n"
              << "PMT: defaults to detector/config/pmt.yaml (day2)\n"
@@ -179,12 +323,6 @@ int main(int argc, char** argv) {
     }
   }
 
-  auto toLower = [](std::string s) {
-    std::transform(s.begin(), s.end(), s.begin(),
-                   [](unsigned char c){ return static_cast<char>(std::tolower(c)); });
-    return s;
-  };
-
   const std::string profileNorm = toLower(profile);
   const bool isDay2Profile = (profileNorm == "day2");
   const bool isDay3Profile = (profileNorm == "day3");
@@ -196,6 +334,9 @@ int main(int argc, char** argv) {
   }
 
   G4cout << "[CFG] Optics config: " << opticsConfig << G4endl;
+  G4cout << "[CFG] Quiet=" << (quiet ? "on" : "off")
+         << " opt_verbose=" << optVerbose
+         << " summary_every=" << summaryEvery << G4endl;
   runManager->SetUserInitialization(new DetectorConstruction(gdml, opticsConfig, checkOverlapsN, qeOverride, qeFlat));
 
   auto makeDefaultOptConfig = [](const std::string& prof) {
@@ -289,6 +430,15 @@ int main(int argc, char** argv) {
 
   OpticalProcessConfig opticalCfg = makeDefaultOptConfig(profileNorm);
   opticalCfg = applyOptOverride(optEnableOverride, opticalCfg);
+  if (timingBoundaryOnly) {
+    opticalCfg.enableCerenkov = false;
+    opticalCfg.enableAbsorption = false;
+    opticalCfg.enableRayleigh = false;
+    opticalCfg.enableMie = false;
+    opticalCfg.enableBoundary = true;
+    optEnableOverride = "timing_boundary_only";
+    G4cout << "[CFG] timing_opt_boundary_only: forced boundary-only optics\n";
+  }
 
   auto* physicsList = new PhysicsList(opticalCfg);
   if (isDay2Profile || isDay3Profile) {
@@ -320,9 +470,16 @@ int main(int argc, char** argv) {
   if (runProfile.enableDigitizer) {
     G4cout << "[CFG] Digitizer enabled (config=" << runProfile.pmtConfigPath
            << ", out=" << runProfile.pmtOutputPath << ")\n";
+    runProfile.qeFlatOverride = digitizerQeFlat;
+    if (digitizerQeScale) runProfile.qeScaleFactor = digitizerQeScale;
+    if (digitizerThreshold) runProfile.thresholdOverride = digitizerThreshold;
   } else {
     G4cout << "[CFG] Digitizer disabled for profile '" << profile << "'\n";
   }
+  runProfile.enableTTS = digitizerEnableTTS;
+  runProfile.enableJitter = digitizerEnableJitter;
+  runProfile.gateMode = digitizerGateMode;
+  runProfile.gateNsOverride = digitizerGateNsOverride;
   G4cout << "[CFG] PMT config path: "
          << (runProfile.pmtConfigPath.empty() ? "<none>" : runProfile.pmtConfigPath)
          << G4endl;
@@ -353,8 +510,10 @@ int main(int argc, char** argv) {
   manifest.opticalDebug = optDebug;
   manifest.quiet = quiet;
   manifest.opticalVerboseLevel = optVerbose;
+  manifest.summaryEvery = summaryEvery;
   manifest.qeScaleOverride = qeOverride;
   manifest.qeFlatOverride = qeFlat;
+  manifest.thresholdPEOverride = thresholdPE;
   SetRunManifest(std::move(manifest));
 
   runManager->SetUserInitialization(new ActionInitialization(rtrk, zshift, runProfile));
@@ -363,18 +522,29 @@ int main(int argc, char** argv) {
   auto* visManager = new G4VisExecutive; visManager->Initialize();
   auto* UImanager = G4UImanager::GetUIpointer();
 
-  if (quiet) {
-    UImanager->ApplyCommand("/run/verbose 0");
-    UImanager->ApplyCommand("/tracking/verbose 0");
-  }
+  const auto applyQuietVerbosity = [&]() {
+    if (!UImanager) return;
+    if (quiet) {
+      UImanager->ApplyCommand("/run/verbose 0");
+      UImanager->ApplyCommand("/tracking/verbose 0");
+      UImanager->ApplyCommand("/process/optical/verbose 0");
+    } else {
+      const int clamped = std::clamp(optVerbose, 0, 2);
+      if (clamped > 0) {
+        UImanager->ApplyCommand("/process/optical/verbose " + std::to_string(clamped));
+      }
+    }
+  };
 
   if (!macroArg.empty()) {
     // Batch: macro handles /run/initialize & vis
+    applyQuietVerbosity();
     G4String cmd = "/control/execute ";
     UImanager->ApplyCommand(cmd + macroArg);
   } else {
     // Interactive (or headless with default driver)
     auto* ui = new G4UIExecutive(argc, argv);
+    applyQuietVerbosity();
     UImanager->ApplyCommand("/run/initialize");
 
     const char* def = std::getenv("G4VIS_DEFAULT_DRIVER");
@@ -391,7 +561,7 @@ int main(int argc, char** argv) {
     delete ui;
   }
 
-  delete visManager;
-  delete runManager;
-  return 0;
+delete visManager;
+delete runManager;
+return 0;
 }

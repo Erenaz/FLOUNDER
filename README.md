@@ -1,80 +1,194 @@
-# FLOUNDER
-Forward LHC neutrinos — water Cherenkov study.
-This repo tracks code, macros, and SLURM jobs. Build & run via Singularity on HPC3.
+FLOUNDER
+========
 
-## What’s new (instrumentation)
+Forward LHC neutrinos — water Cherenkov study. This repo contains the detector simulation, macros, and QC tooling we’re using to calibrate optical photon transport and PMT response for the FLOUNDER concept. Build locally or via Singularity on HPC3; run profiles (day1/2/3) select fast vs. full physics.
 
-- **Photon gun helpers**: `/fln/aimAtPMT <id> [offset_mm] [energy_eV]` fires a single optical photon along the stored PMT normal. See `macros/detector/dev/one_photon_to_pmt.mac`, `ring_probe.mac`, and `ring_uniformity.mac` for examples. Logs now show `[PMTSD:PhotonStep] volume=PMT copy=…` and `[OPT_DBG] event=N OpticalHits size=M`.
-- **Geometry registry**: every photocathode placement is recorded with position/normal so QC scripts can scan PMT rings automatically.
-- **Day profiles**: `day1` = fast optics (Cerenkov+absorption+boundary, 50 photons/step); `day2` = production/digitizer (same processes, digitizer enabled); `day3` retains the full Rayleigh/Mie set.
-- **Quality-control scripts** (all under `detector/tools/qc/`):
-  - `run_pe_yield.sh`, `qe_sweep.sh` (PE/m, QE override ratio)
-  - `run_timing.sh`, `run_darks.sh` (σ_t, dark/event)
-  - `ring_uniformity_parse.py` (CSV + optional polar plot)
-  - `run_ctest.sh` (build + `ctest -R light_yield` for the Cherenkov yield regression)
-- **One-photon QC expectations**:
-  - `[OPT_DBG] event=0 OpticalHits size=1`
-  - `[PMTDigi] evt=0 raw=1 kept≈Bernoulli(QE)`
-- **Mu50 fast macro**: `macros/detector/dev/mu50_fast.mac` (50 GeV μ⁻, 20 events) for PE/m, timing, and dark-rate sweeps.
+What’s new (Week-2 wrap)
+------------------------
 
-## Detector quick start
-- Configure your environment with `source detector/GEANT4.sh`.
-- Configure and build once with `cmake -S detector -B detector/build` and `cmake --build detector/build --target flndr`.
-- Launch simulations via `detector/build/flndr [--profile=<day1|day2|day3>] [macro.mac]`. The profile toggles run-time cuts while keeping a single executable.
-- Macros now live under `macros/detector/`; e.g. `macros/detector/day1/hc.mac`, `macros/detector/dev/one_photon_to_pmt.mac`, or the 50 GeV muon shot `macros/single_mu.mac`.
+**Photon-gun helpers** — aim a single optical photon directly at any photocathode:  
+`/fln/aimAtPMT <id> [offset_mm] [energy_eV] [count]`  
+Example macros: `macros/detector/dev/one_photon_to_pmt.mac`, `ring_probe.mac`, `ring_uniformity.mac`.
 
-## Water presets
-You can swap the water absorption / scattering model at runtime:
+**Geometry registry** — each PMT photocathode stores its center and inward normal for targeting and ring scans.
 
-| Preset | Command line | Notes |
-|--------|--------------|-------|
-| Clear  | `--optics=detector/config/optics_clear.yaml` | Baseline (longest lengths) |
-| Lake   | `--optics=detector/config/optics_lake.yaml`  | Shorter absorption / 0.6× Rayleigh |
-| Poor   | `--optics=detector/config/optics_poor.yaml`  | Quarter absorption / 0.4× Rayleigh |
+**Quiet/verbose controls** — `--quiet`, `--opt_verbose=0..2`, `--summary_every=N` tame logs (no more GB-scale outputs).
 
-These files are verbatim YAMLs embedded in the output manifest, so production logs capture the exact curves used.
+**Digitizer overrides (for QC only)** — `--qe_flat`, `--qe_scale`, `--threshold_pe`, `--gate_mode={standard|centered|off}`, `--gate_ns_override`.
 
-## Optical Photon Transport & PMT Response
+**Profiles —**
 
-### Build & run (calibration)
-```bash
+- **day1:** fast optics (Cherenkov + absorption + boundary, 50 photons/step)  
+- **day2:** production/digitizer (same, digitizer enabled; defaults restored for production)  
+- **day3:** full Rayleigh/Mie option
+
+**QC scripts (under `detector/tools/qc/`):**  
+`run_pe_yield.sh`, `qe_sweep.sh`, `run_timing_burst.sh`, `run_darks.sh`, `ring_uniformity_parse.py`, `week2_all.sh`, plus `ctest -R light_yield`.
+
+Quick start
+-----------
+
+```
+# 1) Environment
 source detector/GEANT4.sh
-cmake -S detector -B detector/build && cmake --build detector/build --target flndr
-mkdir -p logs/day2 out/day2
-FLNDR_PMTHITS_OUT=out/day2/calib_mu_50.root \
-  detector/build/flndr --profile=day2 macros/detector/day2/calib_mu_50.mac \
+
+# 2) Configure & build
+cmake -S detector -B detector/build
+cmake --build detector/build --target flndr
+
+# 3) (Optional) photon-gun sanity — one aimed photon at PMT 0
+detector/build/flndr --profile=day2 --quiet \
+  macros/detector/dev/one_photon_to_pmt.mac \
   --optics=detector/config/optics_clear.yaml \
-  --pmt=detector/config/pmt.yaml \
-  --opt_enable=cherenkov,abs,rayleigh,boundary | tee logs/day2/calib_mu_50.log
+  --pmt=detector/config/pmt.yaml
 ```
 
-Header checklist (PASS lines)
-
-- OPT_PHYS registered; water MPT keys: RINDEX, ABSLENGTH, RAYLEIGH (N=16 @ 300–600 nm)
-- SURF photocathode: EFFICIENCY=0; REFLECTIVITY≈0.05
-- PMTSD attached to PhotocathodeLV (nonzero thickness)
-- PMTDigitizer: TTS=… ps, jitter=… ps, dark=… Hz @ gate=… ns, threshold=… npe
-
-Outputs
-
-- ROOT hits tree and manifest at `out/day2/calib_mu_50.root`
-- QC artifacts in `out/day2/qc/` after running the QC script below.
-
-Water presets
+Run profiles
+------------
 
 ```
-# Clear (default)
---optics=detector/config/optics_clear.yaml
-# Lake water
---optics=detector/config/optics_lake.yaml
-# Poor water
---optics=detector/config/optics_poor.yaml
+detector/build/flndr --profile=<day1|day2|day3> <macro.mac> [flags]
 ```
 
-Run the QC helper once you have the calibration ROOT file:
+Helpful flags
+-------------
 
-```bash
-detector/tools/qc/qc_day2.sh
+`--quiet` silence step-level prints • `--opt_verbose=2` turn on boundary diagnostics • `--optics=…` and `--pmt=…` select YAMLs.
+
+Configuration presets
+---------------------
+
+| Preset      | CLI                                           | Notes                                                  |
+|-------------|-----------------------------------------------|--------------------------------------------------------|
+| Clear water | `--optics=detector/config/optics_clear.yaml`  | Baseline (longest ABS/RAY lengths)                     |
+| Lake water  | `--optics=detector/config/optics_lake.yaml`   | Shorter ABS, ~0.6× Rayleigh                            |
+| Poor water  | `--optics=detector/config/optics_poor.yaml`   | ~¼ ABS, ~0.4× Rayleigh                                 |
+| PMT model   | `--pmt=detector/config/pmt.yaml`              | QE peak ~28% near 400–450 nm; TTS/jitter, darks, threshold |
+
+All selected YAMLs are echoed into the run manifest for reproducibility.
+
+Developer utilities (Week-2)
+----------------------------
+
+**Aimed photon:**
+
+- `macros/detector/dev/one_photon_to_pmt.mac` — single photon → OpticalHits=1, digitizer raw≈Bernoulli(QE).  
+- `macros/detector/dev/ring_probe.mac` — walk PMTs 0–7 for instantaneous health check.  
+- `macros/detector/dev/ring_uniformity.mac` — scan a full ring; parse with `ring_uniformity_parse.py` to CSV/PNG.
+
+**Muon fast macro:**  
+`macros/detector/dev/mu50_fast.mac` (50 GeV μ⁻, 20 events) for PE/m, timing, and dark-rate sweeps with quiet logging.
+
+**Timing burst (QC only):**  
+`macros/detector/dev/timing_burst.mac` + `--timing_opt_boundary_only --qe_flat=1 --threshold_pe=0 --gate_mode=off`  
+→ many photons in one event; measures pure electronics σ (TTS⊕jitter).
+
+Week-2 QC: how to run (one button)
+----------------------------------
+
+```
+# Produces all Week-2 artifacts under out/day2/qc/
+bash detector/tools/qc/week2_all.sh
 ```
 
-This populates `out/day2/qc/` with PE-yield, timing-sigma, and dark-rate JSON summaries for quick comparisons.
+**What it does:**
+
+- Runs `mu50_fast.mac` (quiet) with day2 profile.  
+- PE/m → `out/day2/qc/pe_yield.json` (+ CSV).  
+- QE sweep (real QE vs QE=1) → `out/day2/qc/qe_sweep.json`.  
+- Timing σ (gun burst) → `out/day2/qc/timing_sigma_gun.json`.  
+- Dark singles → `out/day2/qc/dark_rate.json`.  
+- Ring uniformity parse → `out/day2/qc/ring_uniformity.csv/png`.  
+- Pre-loss Cherenkov regression: `ctest -R light_yield`.
+
+Week-2 results (current)
+------------------------
+
+| Check                        | Status | Result / Target                           | Artifact                               |
+|------------------------------|--------|-------------------------------------------|----------------------------------------|
+| PE per meter (μ=50 GeV)      | ✅     | 3.08×10⁴ PE/m, 20 evts (stable ±11%)      | out/day2/qc/pe_yield.json              |
+| QE sweep ratio (QE=1 / real) | ✅     | 6.84 (≥3 expected)                         | out/day2/qc/qe_sweep.json              |
+| Timing σ (gun burst)         | ✅     | 257.24 ps (target ≈ 269 ps; ±10–20% band) | out/day2/qc/timing_sigma_gun.json      |
+| Dark singles / event         | ✅     | 6.95 vs expected 7.37                      | out/day2/qc/dark_rate.json             |
+| Ring uniformity (aimed)      | ✅     | 48/48 PMTs report opt_hits=1               | out/day2/qc/ring_uniformity.csv/png    |
+| Pre-loss Cherenkov (ctest)   | ✅     | within ±30% of expectation                 | ctest -R light_yield output            |
+
+**Notes:**
+
+- Timing σ measured with QC overrides (QE=1, threshold=0, gate off) to isolate electronics.  
+- `dt_min_ps ≈ 0.0022 ps` in burst timing ⇒ no quantization bias.  
+- Production runs restore defaults (standard gate, real QE, thresholds).
+
+Typical commands
+----------------
+
+**Muon fast (quiet):**
+
+```
+detector/build/flndr --profile=day2 --quiet \
+  macros/detector/dev/mu50_fast.mac \
+  --optics=detector/config/optics_clear.yaml \
+  --pmt=detector/config/pmt.yaml
+```
+
+**QE sweep (ratio):**
+
+```
+bash detector/tools/qc/qe_sweep.sh
+# writes out/day2/qc/qe_sweep.json
+```
+
+**Timing burst (QC):**
+
+```
+bash detector/tools/qc/run_timing_burst.sh
+# writes out/day2/qc/timing_sigma_gun.json
+```
+
+**Dark singles:**
+
+```
+bash detector/tools/qc/run_darks.sh
+# writes out/day2/qc/dark_rate.json
+```
+
+**Ring uniformity (then parse):**
+
+```
+detector/build/flndr --profile=day2 --quiet macros/detector/dev/ring_uniformity.mac
+python3 detector/tools/qc/ring_uniformity_parse.py logs/ring_uniformity.log \
+  --out out/day2/qc/ring_uniformity.csv --png out/day2/qc/ring_uniformity.png
+```
+
+Troubleshooting
+---------------
+
+- **Huge logs** — use `--quiet` and avoid `/tracking/verbose` unless debugging; `--opt_verbose=2` only for 1-event diagnostics.  
+- **No PMT hits** — confirm dielectric–dielectric at water↔photocathode, photocathode has RINDEX, SD is attached to PMT_cathode_log, and the aimed photon points to a real PMT (use `/fln/aimAtPMT`).  
+- **QE override doesn’t change PEs** — ensure overrides are applied in the digitizer (`[PMT.QE] effective: …` appears in header).  
+- **Timing σ too small** — your gate truncates negatives; for QC run with `--gate_mode=off` (production remains standard).
+
+Repo layout (high-level)
+------------------------
+
+```
+detector/
+  src, include/…          # GEANT4 app + digitizer + SD
+  build/                  # CMake build tree
+  config/
+    optics_*.yaml         # water optical presets
+    pmt.yaml              # PMT QE, TTS, jitter, darks, threshold
+  tools/qc/               # QC scripts (PE/m, QE sweep, timing, darks, ring)
+macros/
+  detector/dev/           # photon-gun, ring, timing, muon fast
+  detector/day1, day2/    # profile-specific runs
+out/day2/qc/              # Week-2 artifacts (JSON/CSV/PNG)
+logs/                     # small logs (use --quiet)
+```
+
+Reproducibility & tagging
+-------------------------
+
+All runs write a manifest that records profile, optics/PMT YAMLs, and CLI overrides.
+
+Week-2 checkpoint tag: `v0.2-week2-optics-pmt` (recommended).

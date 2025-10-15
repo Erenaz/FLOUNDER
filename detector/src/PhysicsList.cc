@@ -56,7 +56,10 @@ void PhysicsList::ConstructProcess() {
   if (!procMgr) return;
   auto* processList = procMgr->GetProcessList();
   if (!processList) return;
-  const int verboseLevel = std::clamp(GetRunManifest().opticalVerboseLevel, 0, 2);
+  const auto& manifest = GetRunManifest();
+  const int verboseLevel = manifest.quiet
+                              ? 0
+                              : std::clamp(manifest.opticalVerboseLevel, 0, 2);
   const size_t n = processList->size();
   for (size_t i = 0; i < n; ++i) {
     auto* process = (*processList)[i];

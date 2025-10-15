@@ -29,7 +29,13 @@ CMakeFiles/
 cmake_install.cmake
 Makefile
 
-# Output files (if not needed in repo)
-out/
+# Output files
 logs/
-*.root
+out/
+!out/day2/
+out/day2/*
+!out/day2/qc/
+out/day2/qc/*
+!out/day2/qc/*.json
+!out/day2/qc/*.csv
+!out/day2/qc/*.root

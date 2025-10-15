@@ -628,7 +628,8 @@ OpticalPropertiesResult OpticalProperties::LoadFromYaml(const std::string& path,
     pmtSurface->SetSigmaAlpha(sigmaAlpha);
   }
   auto* pmtMPT = new G4MaterialPropertiesTable();
-  pmtMPT->AddProperty("EFFICIENCY",   energy.data(), pmtQEG4.data(), energy.size());
+  std::vector<G4double> zeroEfficiency(pmtQEG4.size(), 0.0);
+  pmtMPT->AddProperty("EFFICIENCY",   energy.data(), zeroEfficiency.data(), energy.size());
   pmtMPT->AddProperty("REFLECTIVITY", energy.data(), pmtRefG4.data(), energy.size());
   pmtSurface->SetMaterialPropertiesTable(pmtMPT);
   result.photocathodeSurface = pmtSurface;

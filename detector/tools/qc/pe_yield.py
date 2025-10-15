@@ -14,11 +14,15 @@ import argparse
 import json
 import math
 import os
+import sys
 from pathlib import Path
-from typing import List
+from typing import List, Tuple, Optional
 
-import uproot
 import numpy as np
+import uproot
+
+
+_track_warning_emitted = False
 
 
 def ensure_outdir(path: Path) -> Path:
@@ -26,7 +30,17 @@ def ensure_outdir(path: Path) -> Path:
     return path
 
 
-def estimate_track_length(tree: uproot.models.TTree.Model_TTree) -> float:
+def read_manifest(file: uproot.ReadOnlyDirectory) -> Optional[dict]:
+    if "run_manifest;1" not in file:
+        return None
+    named = file["run_manifest;1"]
+    try:
+        return json.loads(named.member("fTitle"))
+    except Exception:
+        return None
+
+
+def estimate_track_length(tree: uproot.models.TTree.Model_TTree) -> Tuple[float, bool]:
     """Attempt to extract track length in metres from the tree; fallback to 40 m."""
     for branch in ("trackLen_m", "track_length_m", "trackLen"):
         if branch in tree.keys():
@@ -34,12 +48,16 @@ def estimate_track_length(tree: uproot.models.TTree.Model_TTree) -> float:
             if arr.size > 0:
                 value = float(np.mean(arr))
                 if math.isfinite(value) and value > 0.0:
-                    return value
-    return 40.0  # fallback if not stored
+                    return value, True
+    return 40.0, False  # fallback if not stored
 
 
 def process_file(path: Path):
+    global _track_warning_emitted
+
     with uproot.open(path) as file:
+        manifest = read_manifest(file)
+
         tree = None
         for key in ("hits", "Hits", "digits", "DigiHits"):
             if key in file:
@@ -49,10 +67,28 @@ def process_file(path: Path):
             raise RuntimeError(f"{path}: no hits/digits tree found.")
 
         npe = tree["npe"].array(library="np") if "npe" in tree else None
-        total_pe = float(np.sum(npe)) if npe is not None else 0.0
-        events = len(npe) if npe is not None else 0
-        track_length = estimate_track_length(tree)
+        npe = np.asarray(npe, dtype=float) if npe is not None else np.array([], dtype=float)
+        total_pe = float(np.sum(npe))
+
+        events = None
+        if manifest:
+            events = manifest.get("events")
+
+        event_ids = None
+        if "event" in tree:
+            event_ids = tree["event"].array(library="np")
+            events = int(np.unique(event_ids).size) if events is None else events
+
+        if events is None:
+            events = int(npe.size)
+
+        track_length, found = estimate_track_length(tree)
+        if not found and not _track_warning_emitted:
+            sys.stderr.write("[pe_yield] WARNING: track length branch missing; assuming 40.0 m\n")
+            _track_warning_emitted = True
+
         pe_per_m = total_pe / track_length if track_length > 0 else 0.0
+
         return {
             "file": str(path),
             "events": events,

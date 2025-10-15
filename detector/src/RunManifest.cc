@@ -71,8 +71,10 @@ std::string BuildManifestJson(const RunManifest& m) {
   appendKV("optics_override", m.opticsOverride);
   appendBool("quiet", m.quiet);
   appendKV("optical_verbose", std::to_string(m.opticalVerboseLevel));
+  appendKV("summary_every", std::to_string(m.summaryEvery));
   appendKV("qe_scale_override", std::isfinite(m.qeScaleOverride) ? std::to_string(m.qeScaleOverride) : "nan");
-  appendKV("qe_flat_override", std::isfinite(m.qeFlatOverride) ? std::to_string(m.qeFlatOverride) : "nan", true);
+  appendKV("qe_flat_override", std::isfinite(m.qeFlatOverride) ? std::to_string(m.qeFlatOverride) : "nan");
+  appendKV("threshold_pe_override", std::isfinite(m.thresholdPEOverride) ? std::to_string(m.thresholdPEOverride) : "nan", true);
   os << "}";
   return os.str();
 }

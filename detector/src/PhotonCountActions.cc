@@ -1,13 +1,17 @@
 #include "PhotonCountActions.hh"
+#include "RunManifest.hh"
 #include "G4Event.hh"
 #include "G4OpticalPhoton.hh"
 #include "G4Track.hh"
-#include <iostream>
+#include <G4ios.hh>
 
 unsigned long long PhotonCountEventAction::total_ = 0;
 
 void PhotonCountEventAction::EndOfEventAction(const G4Event*) {
-  std::cout << "[Optics] Event optical photons created: " << count_ << std::endl;
+  const auto& cfg = GetRunManifest();
+  if (!cfg.quiet && cfg.opticalVerboseLevel > 0) {
+    G4cout << "[Optics] Event optical photons created: " << count_ << G4endl;
+  }
 }
 
 void PhotonCountEventAction::Inc() {

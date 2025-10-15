@@ -16,6 +16,7 @@
 #include <iomanip>
 #include <sstream>
 #include <vector>
+#include <algorithm>
 
 PrimaryGeneratorAction::PrimaryGeneratorAction(const G4String& rootFile,
                                                G4double zShiftMM)
@@ -39,7 +40,12 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(const G4String& rootFile,
 
   fMessenger->DeclareMethod("aimAtPMT",
                             &PrimaryGeneratorAction::AimAtPMTCommand,
-                            "Aim optical gun at PMT: /fln/aimAtPMT <id> [offset_mm] [energy_eV]");
+                            "Aim optical gun at PMT: /fln/aimAtPMT <id> [offset_mm] [energy_eV] [count]");
+
+  auto& countCmd = fMessenger->DeclareMethod("gunCount",
+                                             &PrimaryGeneratorAction::SetPhotonGunCount,
+                                             "Set optical photons fired per event in gun mode");
+  countCmd.SetParameterName("count", false);
 }
 
 PrimaryGeneratorAction::~PrimaryGeneratorAction() = default;
@@ -77,14 +83,18 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event) {
   AnnounceModeOnce();
 
   if (fMode == "gun") {
-    fGun->GeneratePrimaryVertex(event);
+    for (int i = 0; i < std::max(1, fGunPhotonCount); ++i) {
+      fGun->GeneratePrimaryVertex(event);
+    }
   } else {
     EnsureRootracker()->GeneratePrimaries(event);
   }
 }
 
 void PrimaryGeneratorAction::AimAtPMTCommand(const G4String& args) {
-  std::istringstream iss(args);
+  std::string cleaned(args);
+  cleaned.erase(std::remove(cleaned.begin(), cleaned.end(), '"'), cleaned.end());
+  std::istringstream iss(cleaned);
   int id = -1;
   std::vector<double> values;
   double value = 0.0;
@@ -98,10 +108,11 @@ void PrimaryGeneratorAction::AimAtPMTCommand(const G4String& args) {
   }
   double offset = values.size() > 0 ? values[0] : 50.0;
   double energy = values.size() > 1 ? values[1] : 3.0;
-  AimAtPMT(id, offset, energy);
+  int count = values.size() > 2 ? static_cast<int>(std::round(values[2])) : 1;
+  AimAtPMT(id, offset, energy, count);
 }
 
-void PrimaryGeneratorAction::AimAtPMT(int id, double offset_mm, double energy_eV) {
+void PrimaryGeneratorAction::AimAtPMT(int id, double offset_mm, double energy_eV, int count) {
   PMTRecord rec;
   if (!GeometryRegistry::Instance().GetPMT(id, rec)) {
     G4cout << "[PHOTON_GUN] ERROR: PMT id=" << id << " not found." << G4endl;
@@ -110,6 +121,7 @@ void PrimaryGeneratorAction::AimAtPMT(int id, double offset_mm, double energy_eV
 
   if (offset_mm <= 0.0) offset_mm = 50.0;
   if (energy_eV <= 0.0) energy_eV = 3.0;
+  if (count <= 0) count = 1;
 
   G4ThreeVector normal = rec.normal;
   if (normal.mag2() == 0.0) {
@@ -126,6 +138,7 @@ void PrimaryGeneratorAction::AimAtPMT(int id, double offset_mm, double energy_eV
   fGun->SetParticlePosition(gunPos);
   fGun->SetParticleMomentumDirection(normal);
   fGun->SetParticleEnergy(energy_eV * eV);
+  fGunPhotonCount = count;
 
   if (fMode != "gun") {
     SetGeneratorMode("gun");
@@ -145,7 +158,17 @@ void PrimaryGeneratorAction::AimAtPMT(int id, double offset_mm, double energy_eV
          << " E=" << energy_eV << " eV"
          << " offset=" << offset_mm << " mm"
          << " phi_deg=" << phi_norm
+         << " count=" << count
          << G4endl;
   G4cout.flags(oldFlags);
   G4cout.precision(oldPrec);
+}
+
+void PrimaryGeneratorAction::SetPhotonGunCount(int count) {
+  if (count <= 0) {
+    count = 1;
+  }
+  fGunPhotonCount = count;
+  fAnnounced = false;
+  G4cout << "[PHOTON_GUN] photon-count set to " << fGunPhotonCount << G4endl;
 }

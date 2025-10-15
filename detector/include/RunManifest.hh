@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <limits>
 
 class TFile;
 
@@ -34,8 +35,10 @@ struct RunManifest {
   bool opticalDebug = false;
   bool quiet = false;
   int  opticalVerboseLevel = 0;
+  int  summaryEvery = 0;
   double qeScaleOverride = std::numeric_limits<double>::quiet_NaN();
   double qeFlatOverride = std::numeric_limits<double>::quiet_NaN();
+  double thresholdPEOverride = std::numeric_limits<double>::quiet_NaN();
 };
 
 void SetRunManifest(RunManifest manifest);

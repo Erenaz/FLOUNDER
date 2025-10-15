@@ -69,7 +69,8 @@ G4bool PMTSD::ProcessHits(G4Step* step, G4TouchableHistory*) {
   ++totalHits_;
   ++hitsThisEvent_;
 
-  if (!GetRunManifest().quiet) {
+  const auto& cfg = GetRunManifest();
+  if (!cfg.quiet && cfg.opticalVerboseLevel > 0) {
     static std::atomic<int> debugCount{0};
     if (debugCount.fetch_add(1) < 20) {
       const auto* hitPV = targetPV;
@@ -90,18 +91,21 @@ void PMTSD::EndOfEvent(G4HCofThisEvent*) {
   auto* event = runManager->GetCurrentEvent();
   if (!event) return;
 
+  const auto& cfg = GetRunManifest();
   const auto totalEvents = runManager->GetNumberOfEventsToBeProcessed();
   if (totalEvents <= 0) return;
 
-  if (currentEventId_ >= 0) {
-    G4cout << "[OPT_DBG] event=" << currentEventId_
-           << " OpticalHits size=" << hitsThisEvent_ << G4endl;
-  } else {
-    G4cout << "[OPT_DBG] event=<unknown> OpticalHits size=" << hitsThisEvent_ << G4endl;
+  if (!cfg.quiet && cfg.opticalVerboseLevel > 0) {
+    if (currentEventId_ >= 0) {
+      G4cout << "[OPT_DBG] event=" << currentEventId_
+             << " OpticalHits size=" << hitsThisEvent_ << G4endl;
+    } else {
+      G4cout << "[OPT_DBG] event=<unknown> OpticalHits size=" << hitsThisEvent_ << G4endl;
+    }
   }
   hitsThisEvent_ = 0;
 
-  if (event->GetEventID() + 1 == totalEvents) {
+  if (!cfg.quiet && cfg.opticalVerboseLevel > 0 && event->GetEventID() + 1 == totalEvents) {
     G4cout << "[HITS] n_pmt_hits=" << totalHits_ << G4endl;
     totalHits_ = 0;
   }

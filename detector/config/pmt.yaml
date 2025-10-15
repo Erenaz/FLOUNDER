@@ -15,3 +15,6 @@ gate_ns: 600
 
 # Per-PMT threshold
 threshold_npe: 0.35
+
+timing:
+  TTS_units: "sigma_ps"

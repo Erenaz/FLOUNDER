@@ -50,6 +50,13 @@ ActionInitialization::ActionInitialization(const G4String& rfile,
     std::string digiOut = fProfile.pmtOutputPath.empty()
                             ? "docs/day4/pmt_digi.root"
                             : fProfile.pmtOutputPath;
-    SetUserAction(new PMTDigitizer(digiCfg, digiOut));
+    SetUserAction(new PMTDigitizer(digiCfg, digiOut,
+                                   fProfile.qeFlatOverride,
+                                   fProfile.qeScaleFactor,
+                                   fProfile.thresholdOverride,
+                                   fProfile.enableTTS,
+                                   fProfile.enableJitter,
+                                   fProfile.gateMode,
+                                   fProfile.gateNsOverride));
   }
 }

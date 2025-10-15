@@ -1,6 +1,7 @@
 #include "PhotonBudget.hh"
 #include "Digitizer.hh"
 #include "IO.hh" 
+#include "RunManifest.hh"
 #include "G4Event.hh"
 #include "G4OpticalPhoton.hh"
 #include "G4VPhysicalVolume.hh"
@@ -62,12 +63,15 @@ void PhotonBudgetEventAction::EndOfEventAction(const G4Event* ev) {
       << (first_kind.empty() ? "NA" : first_kind)
       << "\n";
   // also print a compact line for the log
-  G4cout << "[Budget] evt=" << ev->GetEventID()
-         << " Nprod=" << nProduced
-         << " Nwall=" << nAtWall
-         << " Npmt="  << nAtPMT
-         << " firstΔt(ns)=" << (std::isfinite(firstResidualNs)? firstResidualNs : -1.0)
-         << G4endl;
+  const auto& cfg = GetRunManifest();
+  if (!cfg.quiet && cfg.opticalVerboseLevel > 0) {
+    G4cout << "[Budget] evt=" << ev->GetEventID()
+           << " Nprod=" << nProduced
+           << " Nwall=" << nAtWall
+           << " Npmt="  << nAtPMT
+           << " firstΔt(ns)=" << (std::isfinite(firstResidualNs)? firstResidualNs : -1.0)
+           << G4endl;
+  }
 
     // --- (B) Digitize & write ROOT (optional; only if run action provided)
   if (gIO) {
